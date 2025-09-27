@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>ACIA – Autenticación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+           margin: 0; background: #0a0f1f; color: #e8eefc; display: grid; place-items: center; min-height: 100dvh; }
+    .card { width: min(560px, 92vw); background: #0f1a36; border: 1px solid #173064; border-radius: 16px; padding: 20px 22px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    h1 { font-size: 1.25rem; margin: 0 0 12px; }
+    p { margin: 10px 0; line-height: 1.5; color: #c8d4ff; }
+    .status { padding: 10px 12px; border-radius: 10px; background: #0c244f; border: 1px solid #153a7a; font-size: .95rem; white-space: pre-wrap; }
+    .row { display: grid; gap: 10px; margin-top: 14px; }
+    label { font-size: .9rem; color: #b7c7ff; }
+    input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #284f9a; background: #0b1733; color: #eef3ff; outline: none; }
+    button { margin-top: 10px; padding: 12px 14px; border: 0; border-radius: 12px; background: #1f6fff; color: white; font-weight: 600; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .ok { background: #0e3d16; border: 1px solid #1f7a31; }
+    .err { background: #3d0e11; border: 1px solid #b93845; }
+    .footer { margin-top: 16px; font-size: .9rem; color: #9fb2ff; opacity: .85; }
+    a { color: #7fb4ff; text-decoration: underline; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="card">
+    <h1>ACIA · Confirmación / Recuperación</h1>
+    <p id="phase">Procesando enlace…</p>
+    <div id="status" class="status">Esperá un momento…</div>
+
+    <form id="pwdForm" class="row" style="display:none">
+      <label>Nueva contraseña</label>
+      <input id="pwd1" type="password" minlength="8" autocomplete="new-password" placeholder="********" />
+      <label>Repetir contraseña</label>
+      <input id="pwd2" type="password" minlength="8" autocomplete="new-password" placeholder="********" />
+      <button id="btnSet" type="submit">Guardar contraseña</button>
+    </form>
+
+    <div id="done" class="row" style="display:none">
+      <div class="status ok">¡Listo! Tu contraseña fue actualizada.</div>
+      <button id="btnOpenApp" type="button">Abrir la app</button>
+      <div class="footer">Si el botón no abre la app, <a id="altLink" href="#">tocá acá</a>.</div>
+    </div>
+
+    <div class="footer">Si tenés problemas, reintentá desde el enlace del mail en este mismo dispositivo.</div>
+  </div>
+
+  <script>
+    // TODO: Reemplazá estas constantes por tus valores reales
+    const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co"; // ← con https:// y sin la barra final
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M"; // ← anon key (pública), en comillas
+    const APP_DEEP_LINK_DONE = "com.acia.app://reset-done"; // opcional: deep link para volver a la app
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const $status = document.getElementById('status');
+    const $phase  = document.getElementById('phase');
+    const $form   = document.getElementById('pwdForm');
+    const $pwd1   = document.getElementById('pwd1');
+    const $pwd2   = document.getElementById('pwd2');
+    const $btnSet = document.getElementById('btnSet');
+    const $done   = document.getElementById('done');
+    const $btnApp = document.getElementById('btnOpenApp');
+    const $alt    = document.getElementById('altLink');
+
+    function setStatus(msg, isErr=false) {
+      $status.textContent = msg;
+      $status.className = 'status' + (isErr ? ' err' : '');
+    }
+
+    async function main() {
+      try {
+        // 1) Intercambio de código/token del enlace por sesión
+        await supabase.auth.exchangeCodeForSession(window.location.href).catch(() => {});
+
+        // 2) Leer sesión
+        const { data: { session } } = await supabase.auth.getSession();
+
+        // Detección de tipo (recovery, invite, etc.) desde query o hash
+        const url = new URL(window.location.href);
+        const type = url.searchParams.get('type') || (url.hash.match(/type=([^&]+)/) || [])[1] || 'unknown';
+
+        if (!session) {
+          $phase.textContent = 'Enlace inválido o expirado';
+          setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
+          return;
+        }
+
+        if (['recovery', 'signup', 'invite', 'magiclink'].includes(type) || type === 'unknown') {
+          $phase.textContent = 'Definir contraseña';
+          setStatus('Ingresá tu nueva contraseña y confirmá.');
+          $form.style.display = 'grid';
+
+          $form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const a = $pwd1.value.trim(), b = $pwd2.value.trim();
+            if (a.length < 8) return setStatus('La contraseña debe tener al menos 8 caracteres.', true);
+            if (a !== b)     return setStatus('Las contraseñas no coinciden.', true);
+
+            $btnSet.disabled = true;
+            setStatus('Actualizando contraseña…');
+
+            const { error } = await supabase.auth.updateUser({ password: a });
+            if (error) {
+              setStatus('Error al actualizar: ' + (error.message || 'desconocido'), true);
+              $btnSet.disabled = false;
+              return;
+            }
+
+            $form.style.display = 'none';
+            $done.style.display = 'grid';
+            $phase.textContent = '¡Contraseña actualizada!';
+            setStatus('Podés volver a la app.');
+
+            $btnApp.onclick = () => window.location.href = APP_DEEP_LINK_DONE;
+            $alt.href = APP_DEEP_LINK_DONE;
+          });
+        } else {
+          $phase.textContent = 'Sesión confirmada';
+          setStatus('Tu sesión fue confirmada correctamente. Ya podés volver a la app.');
+          $done.style.display = 'grid';
+          $btnApp.onclick = () => window.location.href = APP_DEEP_LINK_DONE;
+          $alt.href = APP_DEEP_LINK_DONE;
+        }
+      } catch (err) {
+        console.error(err);
+        $phase.textContent = 'Error';
+        setStatus('Ocurrió un error procesando el enlace. Pedí uno nuevo e intentá otra vez.', true);
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
