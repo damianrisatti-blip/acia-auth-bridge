@@ -12,6 +12,7 @@
     .ok{display:inline-block;background:#16a34a;color:#fff;padding:8px 12px;border-radius:999px;font-weight:600;margin-bottom:12px}
     .hint{color:#444}
     .btn{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:12px;background:#111;color:#fff;text-decoration:none}
+    .muted{color:#666;font-size:.9rem;margin-top:8px}
   </style>
 </head>
 <body>
@@ -19,7 +20,41 @@
     <span class="ok">Pago aprobado</span>
     <h1>¡Listo! Tu pago fue aprobado 🎉</h1>
     <p class="hint">Volvé a la app ACIA y tocá <b>“Ya pagué, volver a intentar”</b> para habilitar tu acceso.</p>
-    <a class="btn" href="#" onclick="history.back();return false;">Volver</a>
+
+    <a class="btn" href="#" id="backBtn">Volver</a>
+    <p class="muted" id="tip" style="display:none;">
+      Si no vuelve automáticamente, cerrá esta pestaña y regresá a la app.
+    </p>
   </main>
+
+  <script>
+    function goBackSmart() {
+      try {
+        // 1) Si hay historial o referrer, intentá volver
+        if (history.length > 1 || document.referrer) {
+          history.back();
+          // Por si el back no navega (algunos browsers), mostramos tip
+          setTimeout(() => {
+            document.getElementById('tip').style.display = 'block';
+          }, 600);
+          return;
+        }
+        // 2) Intentá cerrar la pestaña (solo funciona si fue abierta por script)
+        window.close();
+        // 3) Fallback final: redirigir a una página neutra tuya
+        setTimeout(() => {
+          location.href = '/';
+        }, 400);
+      } catch (e) {
+        // Último recurso: redirigir
+        location.href = '/';
+      }
+    }
+
+    document.getElementById('backBtn').addEventListener('click', function (e) {
+      e.preventDefault();
+      goBackSmart();
+    });
+  </script>
 </body>
 </html>
