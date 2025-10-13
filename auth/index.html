@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>ACIA – Autenticación</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
            margin: 0; background: #0a0f1f; color: #e8eefc; display: grid; place-items: center; min-height: 100dvh; }
@@ -47,10 +48,10 @@
   </div>
 
   <script>
-    // TODO: Reemplazá estas constantes por tus valores reales
-    const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co"; // ← con https:// y sin la barra final
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M"; // ← anon key (pública), en comillas
-    const APP_DEEP_LINK_DONE = "com.acia.app://reset-done"; // opcional: deep link para volver a la app
+    // Reemplazá por tus valores reales
+    const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M";
+    const APP_DEEP_LINK_DONE = "com.acia.app://reset-done"; // opcional
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -71,15 +72,22 @@
 
     async function main() {
       try {
-        // 1) Intercambio de código/token del enlace por sesión
-        await supabase.auth.exchangeCodeForSession(window.location.href).catch(() => {});
-
-        // 2) Leer sesión
-        const { data: { session } } = await supabase.auth.getSession();
-
-        // Detección de tipo (recovery, invite, etc.) desde query o hash
         const url = new URL(window.location.href);
-        const type = url.searchParams.get('type') || (url.hash.match(/type=([^&]+)/) || [])[1] || 'unknown';
+        const code       = url.searchParams.get('code');       // enlaces PKCE
+        const token_hash = url.searchParams.get('token_hash'); // recovery/verify
+        const typeParam  = url.searchParams.get('type');       // recovery|signup|magiclink|invite…
+
+        // 1) Intercambiar según el formato del link
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+          if (error) console.warn('exchangeCodeForSession error:', error);
+        } else if (token_hash && typeParam) {
+          const { error } = await supabase.auth.verifyOtp({ type: typeParam, token_hash });
+          if (error) console.warn('verifyOtp error:', error);
+        }
+
+        // 2) Leer sesión; si falló el paso anterior, no habrá sesión
+        const { data: { session } } = await supabase.auth.getSession();
 
         if (!session) {
           $phase.textContent = 'Enlace inválido o expirado';
@@ -87,7 +95,14 @@
           return;
         }
 
-        if (['recovery', 'signup', 'invite', 'magiclink'].includes(type) || type === 'unknown') {
+        // 3) Determinar tipo de flujo
+        const type =
+          typeParam ||
+          (url.hash.match(/type=([^&]+)/) || [])[1] ||
+          'unknown';
+
+        if (['recovery','signup','invite','magiclink'].includes(type) || type === 'unknown') {
+          // Mostrar formulario para definir nueva contraseña
           $phase.textContent = 'Definir contraseña';
           setStatus('Ingresá tu nueva contraseña y confirmá.');
           $form.style.display = 'grid';
@@ -117,6 +132,7 @@
             $alt.href = APP_DEEP_LINK_DONE;
           });
         } else {
+          // Confirmaciones simples
           $phase.textContent = 'Sesión confirmada';
           setStatus('Tu sesión fue confirmada correctamente. Ya podés volver a la app.');
           $done.style.display = 'grid';
