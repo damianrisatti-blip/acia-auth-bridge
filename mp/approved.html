@@ -4,57 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ACIA - Pago aprobado</title>
+  <meta name="robots" content="noindex,nofollow">
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;padding:24px;background:#f7fafc;color:#111}
     .card{max-width:560px;margin:8vh auto;padding:24px;border-radius:16px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.08)}
     h1{font-size:1.4rem;margin:0 0 12px}
     p{margin:0 0 12px;line-height:1.45}
     .ok{display:inline-block;background:#16a34a;color:#fff;padding:8px 12px;border-radius:999px;font-weight:600;margin-bottom:12px}
-    .hint{color:#444}
-    .btn{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:12px;background:#111;color:#fff;text-decoration:none}
-    .muted{color:#666;font-size:.9rem;margin-top:8px}
+    .note{background:#fff7cc;border:1px solid #f1e28f;color:#5a4b00;padding:12px;border-radius:12px}
   </style>
 </head>
 <body>
   <main class="card">
     <span class="ok">Pago aprobado</span>
     <h1>¡Listo! Tu pago fue aprobado 🎉</h1>
-    <p class="hint">Volvé a la app ACIA y tocá <b>“Ya pagué, volver a intentar”</b> para habilitar tu acceso.</p>
+    <p>Volvé a la app ACIA y tocá <b>“Ya pagué, volver a intentar”</b> para habilitar tu acceso.</p>
 
-    <a class="btn" href="#" id="backBtn">Volver</a>
-    <p class="muted" id="tip" style="display:none;">
-      Si no vuelve automáticamente, cerrá esta pestaña y regresá a la app.
-    </p>
+    <p class="note"><b>Importante:</b> cerrá esta ventana del navegador y regresá a la app <b>ACIA</b>.</p>
   </main>
-
-  <script>
-    function goBackSmart() {
-      try {
-        // 1) Si hay historial o referrer, intentá volver
-        if (history.length > 1 || document.referrer) {
-          history.back();
-          // Por si el back no navega (algunos browsers), mostramos tip
-          setTimeout(() => {
-            document.getElementById('tip').style.display = 'block';
-          }, 600);
-          return;
-        }
-        // 2) Intentá cerrar la pestaña (solo funciona si fue abierta por script)
-        window.close();
-        // 3) Fallback final: redirigir a una página neutra tuya
-        setTimeout(() => {
-          location.href = '/';
-        }, 400);
-      } catch (e) {
-        // Último recurso: redirigir
-        location.href = '/';
-      }
-    }
-
-    document.getElementById('backBtn').addEventListener('click', function (e) {
-      e.preventDefault();
-      goBackSmart();
-    });
-  </script>
 </body>
 </html>
