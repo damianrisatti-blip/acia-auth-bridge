@@ -24,27 +24,29 @@
     a { color: #7fb4ff; text-decoration: underline; }
     .muted { opacity:.8; font-size:.85rem }
   </style>
+
+  <!-- Mostrar cualquier error JS en pantalla para facilitar debug -->
   <script>
-    // Si algo JS revienta, lo mostramos en pantalla
     window.onerror = function (msg, src, line, col, err) {
-      try {
-        const el = document.getElementById('status');
-        if (el) {
-          el.textContent = 'JS error: ' + (err?.stack || msg);
-          el.className = 'status err';
-          document.getElementById('phase').textContent = 'Error de script';
-        }
-      } catch {}
+      const el = document.getElementById('status');
+      if (el) {
+        el.textContent = 'JS error: ' + (err?.stack || msg);
+        el.className = 'status err';
+        const ph = document.getElementById('phase');
+        if (ph) ph.textContent = 'Error de script';
+      }
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer onload="window.__SUPA_OK__=true" onerror="window.__SUPA_OK__=false"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+          defer onload="window.__SUPA_OK__=true"
+          onerror="window.__SUPA_OK__=false"></script>
 </head>
 <body>
   <div class="card">
     <h1>ACIA · Confirmación / Recuperación</h1>
     <p id="phase">Cargando página…</p>
     <div id="status" class="status">Esperá un momento…</div>
-
     <div class="muted">URL: <code id="u"></code></div>
 
     <form id="pwdForm" class="row" style="display:none">
@@ -65,10 +67,12 @@
   </div>
 
   <script>
+    // === Config ===
     const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M";
-    const APP_DEEP_LINK_DONE = "com.acia.app://reset-done";
+    const APP_DEEP_LINK_DONE = "com.acia.app://reset-done"; // opcional
 
+    // === UI refs ===
     const $status = document.getElementById('status');
     const $phase  = document.getElementById('phase');
     const $form   = document.getElementById('pwdForm');
@@ -89,34 +93,57 @@
       const u = new URLSearchParams(h);
       return Object.fromEntries(u.entries());
     }
+
+    // Intenta todas las variantes de enlace conocidas
     async function tryAllExchanges(supabase) {
       const url = new URL(location.href);
-      const code       = url.searchParams.get('code');
-      const token_hash = url.searchParams.get('token_hash');
-      const typeParam  = url.searchParams.get('type');
+      const code       = url.searchParams.get('code');        // PKCE o a veces OTP bajo otro nombre
+      const token_hash = url.searchParams.get('token_hash');  // OTP “clásico”
+      const typeParam  = url.searchParams.get('type');        // recovery|signup|magiclink|invite
       const emailParam = url.searchParams.get('email');
 
       // 1) PKCE ?code=
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(location.href);
-        if (!error) return true;
+        if (!error) return true; // funcionó como PKCE
         console.warn('exchangeCodeForSession error:', error);
+
+        // 🔁 FALLBACK: a veces ese "code" es en realidad un OTP de recovery
+        try {
+          const r = await supabase.auth.verifyOtp({
+            type: 'recovery',
+            token_hash: code,
+            email: emailParam || undefined,
+          });
+          if (!r.error) return true; // funcionó como OTP
+          console.warn('verifyOtp(recovery) with code failed:', r.error);
+        } catch (e) {
+          console.warn('verifyOtp(recovery) threw:', e);
+        }
       }
-      // 2) token_hash + type
+
+      // 2) token_hash + type (OTP “normal”)
       if (token_hash && typeParam) {
-        const r = await supabase.auth.verifyOtp({ type: typeParam, token_hash, email: emailParam || undefined });
+        const r = await supabase.auth.verifyOtp({
+          type: typeParam,
+          token_hash,
+          email: emailParam || undefined,
+        });
         if (!r.error) return true;
         console.warn('verifyOtp error:', r.error);
       }
-      // 3) Hash tokens (access_token + refresh_token)
+
+      // 3) Tokens en el hash (#access_token, #refresh_token)
       const hash = parseHashParams();
       if (hash.access_token && hash.refresh_token) {
         const { error } = await supabase.auth.setSession({
-          access_token: hash.access_token, refresh_token: hash.refresh_token
+          access_token: hash.access_token,
+          refresh_token: hash.refresh_token
         });
         if (!error) return true;
         console.warn('setSession error:', error);
       }
+
       return false;
     }
 
@@ -192,7 +219,6 @@
       }
     }
 
-    // Ejecutar cuando termine de cargar el script de supabase (defer)
     document.addEventListener('DOMContentLoaded', main);
   </script>
 </body>
