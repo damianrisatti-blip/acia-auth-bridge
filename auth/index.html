@@ -96,70 +96,58 @@
 
     // Intenta todas las variantes conocidas de enlace
     async function tryAllExchanges(supabase) {
-      const url = new URL(location.href);
-      const code       = url.searchParams.get('code');        // PKCE o a veces OTP con otro nombre
-      const token_hash = url.searchParams.get('token_hash');  // OTP “clásico”
+      const url        = new URL(location.href);
+      const code       = url.searchParams.get('code');        // a veces OTP camuflado
+      const token_hash = url.searchParams.get('token_hash');  // OTP clásico
+      const token      = url.searchParams.get('token');       // OTP en 'token' (nuestro caso)
       const typeParam  = url.searchParams.get('type');        // recovery|signup|magiclink|invite|email_change
       const emailParam = url.searchParams.get('email');
+      const types      = ['recovery','signup','magiclink','invite','email_change'];
 
-      // 1) PKCE ?code=  → usar SOLO el code (no toda la URL)
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (!error) return true; // funcionó como PKCE
-        console.warn('exchangeCodeForSession error:', error);
-
-        // 🔁 FALLBACK 1: ese "code" como OTP usando token_hash
-        const types = ['recovery','signup','magiclink','invite','email_change'];
-        for (const t of types) {
-          try {
-            const r = await supabase.auth.verifyOtp({
-              type: t,
-              token_hash: code,
-              email: emailParam || undefined,
-            });
-            if (!r.error) return true;
-            console.warn(`verifyOtp(${t}) token_hash failed:`, r.error);
-          } catch (e) {
-            console.warn(`verifyOtp(${t}) token_hash threw:`, e);
-          }
-        }
-
-        // 🔁 FALLBACK 2: algunos envían el OTP en ?code= pero debe ir en 'token'
-        for (const t of types) {
-          try {
-            const r = await supabase.auth.verifyOtp({
-              type: t,
-              token: code, // diferencia clave
-              email: emailParam || undefined,
-            });
-            if (!r.error) return true;
-            console.warn(`verifyOtp(${t}) token failed:`, r.error);
-          } catch (e) {
-            console.warn(`verifyOtp(${t}) token threw:`, e);
-          }
-        }
-      }
-
-      // 2) token_hash + type (OTP “normal” con ambos params)
-      if (token_hash && typeParam) {
-        const r = await supabase.auth.verifyOtp({
-          type: typeParam,
-          token_hash,
-          email: emailParam || undefined,
-        });
+      // 1) OTP con token: ?type=...&token=...
+      if (token && typeParam) {
+        const r = await supabase.auth.verifyOtp({ type: typeParam, token, email: emailParam || undefined });
         if (!r.error) return true;
-        console.warn('verifyOtp error:', r.error);
+        console.warn('verifyOtp(token) failed:', r.error);
       }
 
-      // 3) Tokens en el hash (#access_token, #refresh_token)
-      const hash = parseHashParams();
-      if (hash.access_token && hash.refresh_token) {
+      // 2) OTP clásico con token_hash: ?type=...&token_hash=...
+      if (token_hash && typeParam) {
+        const r = await supabase.auth.verifyOtp({ type: typeParam, token_hash, email: emailParam || undefined });
+        if (!r.error) return true;
+        console.warn('verifyOtp(token_hash) failed:', r.error);
+      }
+
+      // 3) Algunos correos meten el OTP en ?code=
+      if (code) {
+        // 3a) probar como token_hash
+        for (const t of types) {
+          let r = await supabase.auth.verifyOtp({ type: t, token_hash: code, email: emailParam || undefined });
+          if (!r.error) return true;
+        }
+        // 3b) probar como token
+        for (const t of types) {
+          let r = await supabase.auth.verifyOtp({ type: t, token: code, email: emailParam || undefined });
+          if (!r.error) return true;
+        }
+      }
+
+      // 4) Enlaces antiguos con #access_token/#refresh_token
+      const h = parseHashParams();
+      if (h.access_token && h.refresh_token) {
         const { error } = await supabase.auth.setSession({
-          access_token: hash.access_token,
-          refresh_token: hash.refresh_token
+          access_token: h.access_token,
+          refresh_token: h.refresh_token
         });
         if (!error) return true;
         console.warn('setSession error:', error);
+      }
+
+      // 5) (último intento) PKCE con ?code=
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) return true;
+        console.warn('exchangeCodeForSession error:', error);
       }
 
       return false;
@@ -185,11 +173,18 @@
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!exchanged || !session) {
+          // Mostrar motivo si viene en el hash (cuando un tracker consume el enlace)
+          const h = parseHashParams();
+          if (h.error || h.error_description) {
+            setStatus(`Error: ${h.error} · ${decodeURIComponent(h.error_description || '')}`, true);
+          } else {
+            setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
+          }
           $phase.textContent = 'Enlace inválido o expirado';
-          setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
           return;
         }
 
+        // Determinar tipo para decidir si mostrar cambio de contraseña
         const u = new URL(location.href);
         const type = u.searchParams.get('type') ||
                      (location.hash.match(/type=([^&]+)/) || [])[1] ||
