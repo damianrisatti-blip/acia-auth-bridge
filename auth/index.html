@@ -102,9 +102,9 @@
       const typeParam  = url.searchParams.get('type');        // recovery|signup|magiclink|invite|email_change
       const emailParam = url.searchParams.get('email');
 
-      // 1) PKCE ?code=
+      // 1) PKCE ?code=  → usar SOLO el code (no toda la URL)
       if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(location.href);
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (!error) return true; // funcionó como PKCE
         console.warn('exchangeCodeForSession error:', error);
 
@@ -129,7 +129,7 @@
           try {
             const r = await supabase.auth.verifyOtp({
               type: t,
-              token: code,                 // ⬅️ diferencia clave
+              token: code, // diferencia clave
               email: emailParam || undefined,
             });
             if (!r.error) return true;
