@@ -25,7 +25,6 @@
     .muted { opacity:.8; font-size:.85rem }
   </style>
 
-  <!-- Mostrar errores JS en pantalla -->
   <script>
     window.onerror = function (msg, src, line, col, err) {
       const el = document.getElementById('status');
@@ -57,10 +56,10 @@
       <button id="btnSet" type="submit">Guardar contraseña</button>
     </form>
 
+    <!-- Cambiado: sin botón, solo mensaje final -->
     <div id="done" class="row" style="display:none">
       <div class="status ok">¡Listo! Tu contraseña fue actualizada.</div>
-      <button id="btnOpenApp" type="button">Abrir la app</button>
-      <div class="footer">Si el botón no abre la app, <a id="altLink" href="#">tocá acá</a>.</div>
+      <p>Listo. Cerrá esta pantalla y volvé a <b>ACIA</b>.</p>
     </div>
 
     <div class="footer">Si tenés problemas, reintentá desde el enlace del mail en este mismo dispositivo.</div>
@@ -70,7 +69,6 @@
     // === Config ===
     const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M";
-    const APP_DEEP_LINK_DONE = "com.acia.app://reset-done"; // opcional
 
     // === UI refs ===
     const $status = document.getElementById('status');
@@ -80,8 +78,6 @@
     const $pwd2   = document.getElementById('pwd2');
     const $btnSet = document.getElementById('btnSet');
     const $done   = document.getElementById('done');
-    const $btnApp = document.getElementById('btnOpenApp');
-    const $alt    = document.getElementById('altLink');
     const $u      = document.getElementById('u');
 
     function setStatus(msg, isErr=false) {
@@ -214,16 +210,12 @@
             $form.style.display = 'none';
             $done.style.display = 'grid';
             $phase.textContent = '¡Contraseña actualizada!';
-            setStatus('Podés volver a la app.');
-            $btnApp.onclick = () => location.href = APP_DEEP_LINK_DONE;
-            $alt.href = APP_DEEP_LINK_DONE;
+            setStatus('Listo. Cerrá esta pantalla y volvé a ACIA.');
           });
         } else {
           $phase.textContent = 'Sesión confirmada';
-          setStatus('Tu sesión fue confirmada correctamente. Ya podés volver a la app.');
+          setStatus('Tu sesión fue confirmada correctamente. Listo, cerrá esta pantalla y volvé a ACIA.');
           $done.style.display = 'grid';
-          $btnApp.onclick = () => location.href = APP_DEEP_LINK_DONE;
-          $alt.href = APP_DEEP_LINK_DONE;
         }
       } catch (err) {
         console.error(err);
