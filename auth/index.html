@@ -25,7 +25,7 @@
     .muted { opacity:.8; font-size:.85rem }
   </style>
 
-  <!-- Mostrar errores JS en pantalla para facilitar debug -->
+  <!-- Mostrar errores JS en pantalla -->
   <script>
     window.onerror = function (msg, src, line, col, err) {
       const el = document.getElementById('status');
@@ -108,19 +108,34 @@
         if (!error) return true; // funcionó como PKCE
         console.warn('exchangeCodeForSession error:', error);
 
-        // 🔁 FALLBACK AMPLIO: ese "code" puede ser OTP de distintos tipos
-        const typesToTry = ['recovery','signup','magiclink','invite','email_change'];
-        for (const t of typesToTry) {
+        // 🔁 FALLBACK 1: ese "code" como OTP usando token_hash
+        const types = ['recovery','signup','magiclink','invite','email_change'];
+        for (const t of types) {
           try {
             const r = await supabase.auth.verifyOtp({
               type: t,
               token_hash: code,
               email: emailParam || undefined,
             });
-            if (!r.error) return true; // funcionó como OTP
-            console.warn(`verifyOtp(${t}) failed:`, r.error);
+            if (!r.error) return true;
+            console.warn(`verifyOtp(${t}) token_hash failed:`, r.error);
           } catch (e) {
-            console.warn(`verifyOtp(${t}) threw:`, e);
+            console.warn(`verifyOtp(${t}) token_hash threw:`, e);
+          }
+        }
+
+        // 🔁 FALLBACK 2: algunos envían el OTP en ?code= pero debe ir en 'token'
+        for (const t of types) {
+          try {
+            const r = await supabase.auth.verifyOtp({
+              type: t,
+              token: code,                 // ⬅️ diferencia clave
+              email: emailParam || undefined,
+            });
+            if (!r.error) return true;
+            console.warn(`verifyOtp(${t}) token failed:`, r.error);
+          } catch (e) {
+            console.warn(`verifyOtp(${t}) token threw:`, e);
           }
         }
       }
@@ -137,12 +152,12 @@
       }
 
       // 3) Tokens en el hash (#access_token, #refresh_token)
-      const h = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-      const params = new URLSearchParams(h);
-      const access_token  = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
-      if (access_token && refresh_token) {
-        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+      const hash = parseHashParams();
+      if (hash.access_token && hash.refresh_token) {
+        const { error } = await supabase.auth.setSession({
+          access_token: hash.access_token,
+          refresh_token: hash.refresh_token
+        });
         if (!error) return true;
         console.warn('setSession error:', error);
       }
@@ -175,8 +190,8 @@
           return;
         }
 
-        const url = new URL(location.href);
-        const type = url.searchParams.get('type') ||
+        const u = new URL(location.href);
+        const type = u.searchParams.get('type') ||
                      (location.hash.match(/type=([^&]+)/) || [])[1] ||
                      'unknown';
 
