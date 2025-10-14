@@ -25,7 +25,7 @@
     .muted { opacity:.8; font-size:.85rem }
   </style>
 
-  <!-- Mostrar cualquier error JS en pantalla para facilitar debug -->
+  <!-- Mostrar errores JS en pantalla para facilitar debug -->
   <script>
     window.onerror = function (msg, src, line, col, err) {
       const el = document.getElementById('status');
@@ -94,12 +94,12 @@
       return Object.fromEntries(u.entries());
     }
 
-    // Intenta todas las variantes de enlace conocidas
+    // Intenta todas las variantes conocidas de enlace
     async function tryAllExchanges(supabase) {
       const url = new URL(location.href);
-      const code       = url.searchParams.get('code');        // PKCE o a veces OTP bajo otro nombre
+      const code       = url.searchParams.get('code');        // PKCE o a veces OTP con otro nombre
       const token_hash = url.searchParams.get('token_hash');  // OTP “clásico”
-      const typeParam  = url.searchParams.get('type');        // recovery|signup|magiclink|invite
+      const typeParam  = url.searchParams.get('type');        // recovery|signup|magiclink|invite|email_change
       const emailParam = url.searchParams.get('email');
 
       // 1) PKCE ?code=
@@ -108,21 +108,24 @@
         if (!error) return true; // funcionó como PKCE
         console.warn('exchangeCodeForSession error:', error);
 
-        // 🔁 FALLBACK: a veces ese "code" es en realidad un OTP de recovery
-        try {
-          const r = await supabase.auth.verifyOtp({
-            type: 'recovery',
-            token_hash: code,
-            email: emailParam || undefined,
-          });
-          if (!r.error) return true; // funcionó como OTP
-          console.warn('verifyOtp(recovery) with code failed:', r.error);
-        } catch (e) {
-          console.warn('verifyOtp(recovery) threw:', e);
+        // 🔁 FALLBACK AMPLIO: ese "code" puede ser OTP de distintos tipos
+        const typesToTry = ['recovery','signup','magiclink','invite','email_change'];
+        for (const t of typesToTry) {
+          try {
+            const r = await supabase.auth.verifyOtp({
+              type: t,
+              token_hash: code,
+              email: emailParam || undefined,
+            });
+            if (!r.error) return true; // funcionó como OTP
+            console.warn(`verifyOtp(${t}) failed:`, r.error);
+          } catch (e) {
+            console.warn(`verifyOtp(${t}) threw:`, e);
+          }
         }
       }
 
-      // 2) token_hash + type (OTP “normal”)
+      // 2) token_hash + type (OTP “normal” con ambos params)
       if (token_hash && typeParam) {
         const r = await supabase.auth.verifyOtp({
           type: typeParam,
@@ -134,12 +137,12 @@
       }
 
       // 3) Tokens en el hash (#access_token, #refresh_token)
-      const hash = parseHashParams();
-      if (hash.access_token && hash.refresh_token) {
-        const { error } = await supabase.auth.setSession({
-          access_token: hash.access_token,
-          refresh_token: hash.refresh_token
-        });
+      const h = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+      const params = new URLSearchParams(h);
+      const access_token  = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+      if (access_token && refresh_token) {
+        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
         if (!error) return true;
         console.warn('setSession error:', error);
       }
