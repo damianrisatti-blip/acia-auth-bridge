@@ -390,7 +390,12 @@
           <p class="muted">Incluye hosting, soporte y actualizaciones.</p>
           <div class="cta-row" style="margin-top:6px">
             <a class="btn primary" href="https://wa.me/5491168291409" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">Consultar por WhatsApp</a>
-            <a class="btn ghost" href="mailto:soporte@acia.com.ar">Escribir por email</a>
+            <a class="btn ghost"
+               href="mailto:soporte@acia.com.ar?subject=Consulta%20ACIA"
+               target="_blank" rel="noopener">
+            Escribir por email
+            </a>
+
           </div>
         </div>
       </div>
@@ -428,7 +433,9 @@
     </div>
     <div class="copy">
       <a href="/privacy">Política de privacidad</a> ·
-      <a href="mailto:soporte@acia.com.ar">soporte@acia.com.ar</a> ·
+      <a  class="btn ghost"
+       href="mailto:soporte@acia.com.ar?subject=Consulta%20ACIA"
+       target="_blank" rel="noopener">soporte@acia.com.ar</a> ·
       <a href="https://wa.me/5491168291409" target="_blank" rel="noopener">WhatsApp: +54 9 11 6829 1409</a>
     </div>
   </div>
@@ -461,6 +468,26 @@
     links.forEach(a => a.addEventListener('click', closeDrawer));
     window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
   });
+</script>
+<script>
+  // Fallback para mailto en PWAs / iOS
+  (function(){
+    // Detecta si está en modo standalone (PWA)
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                       || window.navigator.standalone === true;
+
+    // Aplica a todos los <a href="mailto:...">
+    document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        // En algunos casos abrir en nueva pestaña no funciona;
+        // forzamos la navegación directa.
+        if (isStandalone) {
+          e.preventDefault();
+          window.location.href = a.getAttribute('href');
+        }
+      });
+    });
+  })();
 </script>
 
 </body>
