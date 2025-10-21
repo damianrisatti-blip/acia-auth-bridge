@@ -18,9 +18,7 @@
       --line:#e7ecf5; --accent:#0B74DE; --accent-2:#0aa77f; --shadow:0 10px 30px rgba(10,30,80,.08);
     }
     @media (prefers-color-scheme: dark){
-      :root{
-        --bg:#0a0f1f; --fg:#e8eefc; --muted:#b8c2d9; --card:#0f1730; --line:#1f2a4a; --shadow:0 10px 30px rgba(0,0,0,.35);
-      }
+      :root{ --bg:#0a0f1f; --fg:#e8eefc; --muted:#b8c2d9; --card:#0f1730; --line:#1f2a4a; --shadow:0 10px 30px rgba(0,0,0,.35); }
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;line-height:1.55}
@@ -31,6 +29,8 @@
     /* Header */
     header{position:sticky;top:0;backdrop-filter:saturate(180%) blur(8px);background:color-mix(in srgb, var(--bg) 86%, transparent);border-bottom:1px solid var(--line);z-index:40}
     .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:28px;width:auto;display:block;border-radius:6px} /* ✅ proporción conservada */
     .navlinks{display:flex;gap:18px;align-items:center}
     .btn{display:inline-block;border:1px solid var(--accent);color:var(--fg);padding:10px 14px;border-radius:12px;text-decoration:none;transition:.2s;box-shadow:var(--shadow)}
     .btn:hover{transform:translateY(-1px)}
@@ -40,69 +40,71 @@
     .menu-btn{display:none;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--card)}
     @media (max-width:880px){ .navlinks{display:none} .menu-btn{display:inline-flex} }
 
-    /* Hero con logo grande */
-    .hero{padding:40px 0 24px}
-    .hero-inner{display:grid;gap:22px;justify-items:center;text-align:center}
+    /* HERO */
+    .hero{padding:26px 0 18px}
+    .hero-inner{display:grid;gap:16px;justify-items:center;text-align:center}
     .hero-logo{
-      width:min(900px, 92vw);
-      max-width:900px;
-      height:auto;         /* mantiene proporciones */
+      width:min(620px, 82vw); /* ✅ más chico */
+      height:auto;            /* ✅ mantiene proporción */
       display:block;
-      filter: drop-shadow(0 12px 32px rgba(10,30,80,.10));
+      filter: drop-shadow(0 12px 32px rgba(10,30,80,.08));
     }
-    .headline{font-size:clamp(22px,3.6vw,28px);margin:10px 0 2px}
+    .headline{font-size:clamp(22px,3.6vw,28px);margin:8px 0 2px}
     .sub{color:var(--muted);max-width:70ch;margin:0 auto}
-    .cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:14px}
 
-    .section{padding:38px 0}
+    /* Captura principal */
+    .hero-shot{margin-top:16px}
+    .hero-shot img{
+      width:min(980px, 92vw);
+      height:auto;           /* ✅ sin deformar */
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      background:var(--bg);
+    }
+
+    .section{padding:34px 0}
     .section h2{font-size:28px;margin:0 0 10px}
     .muted{color:var(--muted)}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+
+    /* Grid de funciones y módulos */
     .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    @media (max-width:880px){ .grid3{grid-template-columns:1fr} .grid4{grid-template-columns:1fr 1fr} }
+    @media (max-width:980px){ .grid4{grid-template-columns:repeat(3,1fr)} }
+    @media (max-width:720px){ .grid3{grid-template-columns:1fr} .grid4{grid-template-columns:1fr 1fr} }
 
-    .feat h3{margin:.2em 0;font-size:18px}
+    /* Tarjeta de módulo con screenshot */
     .module{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
-    .module h4{margin:.2em 0}
-    .cta-band{padding:26px;border:1px dashed var(--line);border-radius:16px;text-align:center;margin-top:18px}
+    .mod-img{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+    .module h4{margin:.6em 0 .2em}
 
+    .cta-band{padding:24px;border:1px dashed var(--line);border-radius:16px;text-align:center;margin-top:18px}
+
+    /* FAQ */
     .faq{display:grid;gap:14px}
     details{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card)}
     summary{cursor:pointer;font-weight:600}
 
-    footer{border-top:1px solid var(--line);padding:28px 0;margin-top:30px}
+    footer{border-top:1px solid var(--line);padding:26px 0;margin-top:28px}
     .copy{color:var(--muted);font-size:13px}
   </style>
   <script>
-    // Menú móvil simple
+    // Menú móvil
     document.addEventListener('DOMContentLoaded', ()=>{
       const btn=document.querySelector('#menuBtn'); const links=document.querySelector('#links');
       btn?.addEventListener('click', ()=> links.style.display = links.style.display==='flex' ? 'none' : 'flex');
     });
-  </script>
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"SoftwareApplication",
-    "name":"ACIA",
-    "operatingSystem":"Android",
-    "applicationCategory":"BusinessApplication",
-    "offers":{"@type":"Offer","price":"0","priceCurrency":"ARS"},
-    "url":"https://acia.com.ar",
-    "image":"https://acia.com.ar/assets/Logo-sin-bajada-color.png",
-    "publisher":{"@type":"Organization","name":"ACIA"}
-  }
   </script>
 </head>
 <body>
 
 <header>
   <div class="container nav">
-    <a href="/" aria-label="Inicio ACIA" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none">
-      <img src="/assets/Logo-sin-bajada-color.png" alt="ACIA" width="32" height="32" style="border-radius:6px" />
-      <b>ACIA</b>
+    <!-- ✅ Solo logo, sin texto redundante -->
+    <a class="brand" href="/" aria-label="Inicio ACIA">
+      <img src="/assets/Logo-sin-bajada-color.png" alt="ACIA" />
     </a>
     <nav class="navlinks" id="links">
       <a href="#funciones">Funciones</a>
@@ -116,73 +118,82 @@
 </header>
 
 <main>
-  <!-- HERO con logo grande -->
+  <!-- HERO con logo + captura principal -->
   <section class="hero">
     <div class="container hero-inner">
       <picture>
-        <!-- En modo oscuro, usá la versión monocromo azul para mejor contraste -->
         <source media="(prefers-color-scheme: dark)" srcset="/assets/Logo-monocromo-azul.png" />
-        <!-- Predeterminado: logo a color con bajada -->
         <img class="hero-logo" src="/assets/Logo-color.png" alt="ACIA – Administración Comercial con Inteligencia Artificial" />
       </picture>
 
       <h1 class="headline">Administración Comercial con Inteligencia Artificial</h1>
-      <p class="sub">Centralizá productos, ventas, compras con OCR, ofertas, cuenta corriente y analíticas — todo sincronizado en la nube y listo para múltiples dispositivos.</p>
+      <p class="sub">Productos, ventas, compras con OCR, ofertas, cuenta corriente y analíticas — todo sincronizado en la nube.</p>
       <div class="cta">
         <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.acia.app" target="_blank" rel="noopener">Descargar en Google Play</a>
         <a class="btn success" href="mailto:soporte@acia.com.ar">Solicitar demo</a>
-        <a class="btn ghost" href="#funciones">Ver funciones</a>
+        <a class="btn ghost" href="#modulos">Ver módulos</a>
+      </div>
+
+      <!-- 🔽 Subí tu captura principal como /assets/screens/home.png -->
+      <div class="hero-shot">
+        <img src="/assets/screens/home.png" alt="Pantalla principal de ACIA" />
       </div>
     </div>
   </section>
 
-  <!-- FEATURES -->
+  <!-- Funciones -->
   <section id="funciones" class="section">
     <div class="container">
       <h2>Funciones principales</h2>
       <p class="muted">Todo lo que necesitás para operar tu comercio, en una sola app.</p>
       <div class="grid3">
-        <div class="card feat">
-          <h3>Catálogo de productos</h3>
-          <p class="muted">Gestión de stock, variantes, marcas y precios con actualizaciones rápidas.</p>
-        </div>
-        <div class="card feat">
-          <h3>Compras con OCR</h3>
-          <p class="muted">Capturá facturas y listas con reconocimiento de texto para acelerar la carga.</p>
-        </div>
-        <div class="card feat">
-          <h3>Ventas con ticket</h3>
-          <p class="muted">Punto de venta ágil y compatible con impresoras Bluetooth térmicas.</p>
-        </div>
-        <div class="card feat">
-          <h3>Cuenta corriente</h3>
-          <p class="muted">Pagos, saldos y movimientos de clientes siempre al día.</p>
-        </div>
-        <div class="card feat">
-          <h3>Ofertas y precios</h3>
-          <p class="muted">Promos por % o monto, combos 2×1, 3×2 y control de márgenes.</p>
-        </div>
-        <div class="card feat">
-          <h3>Analíticas</h3>
-          <p class="muted">Rentabilidad por familia, proveedor y período. Decisiones con datos.</p>
-        </div>
+        <div class="card"><h3>Catálogo de productos</h3><p class="muted">Stock, variantes, marcas y precios con actualizaciones rápidas.</p></div>
+        <div class="card"><h3>Compras con OCR</h3><p class="muted">Capturá facturas y listas para acelerar la carga.</p></div>
+        <div class="card"><h3>Ventas con ticket</h3><p class="muted">Compatible con impresoras térmicas Bluetooth.</p></div>
+        <div class="card"><h3>Cuenta corriente</h3><p class="muted">Pagos, saldos y movimientos de clientes.</p></div>
+        <div class="card"><h3>Ofertas y precios</h3><p class="muted">% o monto, combos 2×1, 3×2 y control de márgenes.</p></div>
+        <div class="card"><h3>Analíticas</h3><p class="muted">Rentabilidad por familia, proveedor y período.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- MODULOS -->
+  <!-- Módulos con capturas -->
   <section id="modulos" class="section">
     <div class="container">
       <h2>Módulos incluidos</h2>
       <div class="grid4">
-        <div class="module"><h4>Productos</h4><p class="muted">Familias, subfamilias, EAN, variantes.</p></div>
-        <div class="module"><h4>Compras</h4><p class="muted">Manual + Inteligente (OCR), proveedores.</p></div>
-        <div class="module"><h4>Ventas</h4><p class="muted">Carrito, medios de pago, ticket Bluetooth.</p></div>
-        <div class="module"><h4>Clientes</h4><p class="muted">Cuenta corriente, pagos y recibos.</p></div>
-        <div class="module"><h4>Ofertas</h4><p class="muted">Descuentos, combos y vigencias.</p></div>
-        <div class="module"><h4>Stock</h4><p class="muted">Entradas/salidas/ajustes, pesables.</p></div>
-        <div class="module"><h4>Sync</h4><p class="muted">Supabase en la nube, multi-dispositivo.</p></div>
-        <div class="module"><h4>Reportes</h4><p class="muted">KPIs clave de tu negocio.</p></div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/productos.png" alt="Productos" />
+          <h4>Productos</h4><p class="muted">Familias, subfamilias, EAN, variantes.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/compras.png" alt="Compras" />
+          <h4>Compras</h4><p class="muted">Manual + Inteligente (OCR), proveedores.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/ventas.png" alt="Ventas" />
+          <h4>Ventas</h4><p class="muted">Carrito, medios de pago, ticket Bluetooth.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/clientes.png" alt="Clientes" />
+          <h4>Clientes</h4><p class="muted">Cuenta corriente, pagos y recibos.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/ofertas.png" alt="Ofertas" />
+          <h4>Ofertas</h4><p class="muted">Descuentos, combos y vigencias.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/stock.png" alt="Stock" />
+          <h4>Stock</h4><p class="muted">Entradas/salidas/ajustes, pesables.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/sync.png" alt="Sync" />
+          <h4>Sync</h4><p class="muted">Supabase en la nube, multi-dispositivo.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/reportes.png" alt="Reportes" />
+          <h4>Reportes</h4><p class="muted">KPIs clave de tu negocio.</p>
+        </div>
       </div>
 
       <div class="cta-band">
@@ -200,22 +211,10 @@
     <div class="container">
       <h2>Preguntas frecuentes</h2>
       <div class="faq">
-        <details>
-          <summary>¿La app funciona sin internet?</summary>
-          <p class="muted">Sí. Podés operar ventas y stock en local. Al reconectarte, se sincroniza automáticamente con la nube.</p>
-        </details>
-        <details>
-          <summary>¿Cómo se imprime el ticket?</summary>
-          <p class="muted">Con impresoras térmicas Bluetooth compatibles (58 mm). Configurás una vez y queda listo.</p>
-        </details>
-        <details>
-          <summary>¿Puedo migrar mis productos actuales?</summary>
-          <p class="muted">Sí, podés importarlos y además usar el módulo de IA para completar marca, variante y clasificación.</p>
-        </details>
-        <details>
-          <summary>¿Qué necesito para empezar?</summary>
-          <p class="muted">Un dispositivo Android, crear tu usuario y (opcional) configurar la suscripción vía MercadoPago.</p>
-        </details>
+        <details><summary>¿La app funciona sin internet?</summary><p class="muted">Sí. Podés operar ventas y stock en local. Al reconectarte, se sincroniza con la nube.</p></details>
+        <details><summary>¿Cómo se imprime el ticket?</summary><p class="muted">Con impresoras térmicas Bluetooth compatibles (58 mm).</p></details>
+        <details><summary>¿Puedo migrar mis productos actuales?</summary><p class="muted">Sí, podés importarlos y usar el módulo de IA para completar datos.</p></details>
+        <details><summary>¿Qué necesito para empezar?</summary><p class="muted">Un dispositivo Android, crear tu usuario y (opcional) suscripción vía MercadoPago.</p></details>
       </div>
     </div>
   </section>
