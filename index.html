@@ -26,6 +26,7 @@
     a:hover{text-decoration:underline}
     .container{max-width:1100px;margin:0 auto;padding:0 20px}
 
+    /* Header */
     header{position:sticky;top:0;backdrop-filter:saturate(180%) blur(8px);background:color-mix(in srgb, var(--bg) 86%, transparent);border-bottom:1px solid var(--line);z-index:40}
     .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
     .brand img{height:28px;width:auto;display:block;border-radius:6px}
@@ -38,42 +39,65 @@
     .menu-btn{display:none;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--card)}
     @media (max-width:880px){ .navlinks{display:none} .menu-btn{display:inline-flex} }
 
-    .hero{padding:24px 0 18px}
-    .hero-inner{display:grid;gap:14px;justify-items:center;text-align:center}
-    .hero-logo{width:min(480px, 80vw);height:auto;display:block;filter: drop-shadow(0 12px 32px rgba(10,30,80,.08))}
-    .headline{font-size:clamp(22px,3.6vw,28px);margin:6px 0 2px}
-    .sub{color:var(--muted);max-width:70ch;margin:0 auto}
-    .cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px}
-    .hero-shot{margin-top:14px}
-    .hero-shot img{ width:min(980px, 92vw); height:auto; border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); background:var(--bg); }
+    /* HERO */
+    .hero{padding:20px 0 12px}
+    .hero-inner{display:grid;gap:12px;justify-items:center;text-align:center}
+    .hero-logo{width:min(380px, 64vw);height:auto;display:block;filter:drop-shadow(0 10px 26px rgba(10,30,80,.08))}
+    .headline{font-size:clamp(20px,3.2vw,26px);margin:4px 0 0}
+    .sub{color:var(--muted);max-width:68ch;margin:0 auto}
+    .cta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
 
-    .section{padding:32px 0}
-    .section h2{font-size:28px;margin:0 0 10px}
+    /* Imagen de HOME MUCHO más chica */
+    .hero-shot{margin-top:10px}
+    .hero-shot .screenshot{
+      width:min(560px, 88vw);          /* antes 980px -> ahora ~560px */
+      max-height:420px;                /* tope de altura */
+      height:auto;
+      object-fit:contain;              /* no recorta, solo encaja */
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .section{padding:26px 0}
+    .section h2{font-size:26px;margin:0 0 8px}
     .muted{color:var(--muted)}
     .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
 
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
     @media (max-width:980px){ .grid4{grid-template-columns:repeat(3,1fr)} }
     @media (max-width:720px){ .grid3{grid-template-columns:1fr} .grid4{grid-template-columns:1fr 1fr} }
 
-    .module{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
-    .mod-img{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
-    .module h4{margin:.6em 0 .2em}
+    /* Capturas de módulos un poco más chicas */
+    .module{padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+    .mod-img{
+      width:100%;
+      height:auto;
+      max-height:240px;                /* tope en desktop */
+      object-fit:contain;              /* NO recorta; encaja con fondo */
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:10px;
+    }
+    @media (max-width:980px){ .mod-img{ max-height:200px } }
+    @media (max-width:720px){ .mod-img{ max-height:160px } }
+    .module h4{margin:.5em 0 .15em}
 
-    .cta-band{padding:22px;border:1px dashed var(--line);border-radius:16px;text-align:center;margin-top:16px}
+    .cta-band{padding:18px;border:1px dashed var(--line);border-radius:14px;text-align:center;margin-top:14px}
 
-    .twocol{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:center}
+    .twocol{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;align-items:center}
     @media (max-width:880px){ .twocol{grid-template-columns:1fr} }
 
-    .list{display:grid;gap:10px}
+    .list{display:grid;gap:8px}
     .list li{margin-left:18px}
 
-    .faq{display:grid;gap:14px}
+    .faq{display:grid;gap:12px}
     details{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card)}
     summary{cursor:pointer;font-weight:600}
 
-    footer{border-top:1px solid var(--line);padding:24px 0;margin-top:26px}
+    footer{border-top:1px solid var(--line);padding:20px 0;margin-top:20px}
     .copy{color:var(--muted);font-size:13px}
   </style>
   <script>
@@ -104,6 +128,7 @@
 </header>
 
 <main>
+  <!-- HERO -->
   <section class="hero">
     <div class="container hero-inner">
       <picture>
@@ -119,12 +144,14 @@
         <a class="btn ghost" href="#modulos">Ver módulos</a>
       </div>
 
+      <!-- HOME mucho más chico -->
       <div class="hero-shot">
-        <img src="/assets/screens/home.webp" alt="Pantalla principal de ACIA" loading="lazy" decoding="async" />
+        <img class="screenshot" src="/assets/screens/home.webp" alt="Pantalla principal de ACIA" loading="lazy" decoding="async" />
       </div>
     </div>
   </section>
 
+  <!-- Funciones -->
   <section id="funciones" class="section">
     <div class="container">
       <h2>Funciones principales</h2>
@@ -140,6 +167,7 @@
     </div>
   </section>
 
+  <!-- Módulos -->
   <section id="modulos" class="section">
     <div class="container">
       <h2>Módulos incluidos</h2>
@@ -184,6 +212,7 @@
     </div>
   </section>
 
+  <!-- Alta por IA -->
   <section id="alta-ia" class="section">
     <div class="container twocol">
       <div>
@@ -206,6 +235,7 @@
     </div>
   </section>
 
+  <!-- Ventajas -->
   <section id="ventajas" class="section">
     <div class="container">
       <h2>¿Por qué elegir ACIA?</h2>
@@ -220,6 +250,7 @@
     </div>
   </section>
 
+  <!-- FAQ -->
   <section id="faq" class="section">
     <div class="container">
       <h2>Preguntas frecuentes</h2>
