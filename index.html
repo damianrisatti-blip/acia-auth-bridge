@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <title>ACIA – Administración Comercial por Inteligencia Artificial</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="La forma más simple e inteligente de gestionar tu comercio: ventas, stock, compras con OCR, cuenta corriente, ofertas y analíticas, con IA." />
+  <meta name="description" content="Gestión y ventas con IA para comercios: stock, compras con OCR, ventas con ticket Bluetooth, cuenta corriente, ofertas y analíticas." />
   <link rel="icon" href="/assets/Logo-sin-bajada-color.png" />
   <meta property="og:title" content="ACIA – Administración Comercial por IA" />
-  <meta property="og:description" content="Gestión completa con IA: productos, ventas con ticket Bluetooth, compras con OCR, cuenta corriente y analíticas." />
+  <meta property="og:description" content="Productos, ventas, compras con OCR, cuenta corriente y analíticas. Multiusuario y multidispositivo con ACIA Ventas." />
   <meta property="og:url" content="https://acia.com.ar" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://acia.com.ar/assets/Logo-sin-bajada-color.png" />
@@ -35,11 +35,10 @@
     .btn:hover{transform:translateY(-1px)}
     .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
     .btn.ghost{background:transparent}
-    .btn.success{background:var(--accent-2);border-color:var(--accent-2);color:#fff}
     .menu-btn{display:none;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--card)}
     @media (max-width:880px){ .navlinks{display:none} .menu-btn{display:inline-flex} }
 
-    /* HERO (sin botones de descarga/demo) */
+    /* HERO */
     .hero{padding:22px 0 8px}
     .hero-inner{display:grid;gap:12px;justify-items:center;text-align:center}
     .hero-logo{width:min(380px, 64vw);height:auto;display:block;filter:drop-shadow(0 10px 26px rgba(10,30,80,.08))}
@@ -51,28 +50,35 @@
     .muted{color:var(--muted)}
     .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
 
+    /* Grids */
     .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
     .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
     @media (max-width:980px){ .grid4{grid-template-columns:repeat(3,1fr)} }
     @media (max-width:720px){ .grid3{grid-template-columns:1fr} .grid4{grid-template-columns:1fr 1fr} }
 
-    /* Capturas */
+    /* Módulos / imágenes */
     .module{padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
     .mod-img{
-      width:100%;
-      height:auto;
-      max-height:240px;
-      object-fit:contain;
-      background:var(--bg);
-      border:1px solid var(--line);
-      border-radius:10px;
+      width:100%; height:auto; max-height:240px; object-fit:contain;
+      background:var(--bg); border:1px solid var(--line); border-radius:10px;
     }
     @media (max-width:980px){ .mod-img{ max-height:200px } }
     @media (max-width:720px){ .mod-img{ max-height:160px } }
     .module h4{margin:.5em 0 .15em}
 
-    .twocol{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center}
+    /* Dos columnas (igualadas en altura) */
+    .twocol{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch}
     @media (max-width:880px){ .twocol{grid-template-columns:1fr} }
+
+    /* Vista HOME sin bordes blancos: se renderiza como fondo "cover" y se recorta */
+    .home-shot{
+      border-radius:16px; border:1px solid var(--line); box-shadow:var(--shadow);
+      background-image:url('/assets/screens/home.webp');
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+      /* altura aproximada de dos filas de tarjetas de funciones */
+      min-height:520px; height:100%; overflow:hidden;
+    }
+    @media (max-width:880px){ .home-shot{ min-height:420px } }
 
     .list{display:grid;gap:8px}
     .list li{margin-left:18px}
@@ -106,6 +112,8 @@
       <a href="#modulos">Módulos</a>
       <a href="#alta-ia">Alta por IA</a>
       <a href="#multi">Multiusuario</a>
+      <a href="#manual">Manual</a>
+      <a href="#videos">Videos</a>
       <a href="#ventajas">Ventajas</a>
       <a href="#precio">Precio</a>
       <a href="/privacy">Privacidad</a>
@@ -124,12 +132,12 @@
         <img class="hero-logo" src="/assets/Logo-color.png" alt="ACIA – Administración Comercial con Inteligencia Artificial" loading="eager" decoding="async" />
       </picture>
       <h1 class="headline">La forma más simple e inteligente de gestionar tu comercio</h1>
-      <p class="sub">Empezá sin complicaciones: podés arrancar vacío y cargar productos al vender/recibir. Todo queda guardado y sincronizado automáticamente.</p>
-      <div class="pill">Soporte humano y mejoras continuas incluidas</div>
+      <p class="sub">Arrancás rápido: podés empezar vacío y cargar productos al vender o recibir. Todo sincronizado en la nube.</p>
+      <div class="pill">Soporte humano y mejoras continuas</div>
     </div>
   </section>
 
-  <!-- Funciones (con Home al costado) -->
+  <!-- Funciones (Home a la derecha, angosto y sin bordes blancos) -->
   <section id="funciones" class="section">
     <div class="container twocol">
       <div>
@@ -137,16 +145,14 @@
         <p class="muted">Todo lo que necesitás para operar tu comercio, en una sola app.</p>
         <div class="grid3" style="margin-top:10px">
           <div class="card"><h3>Catálogo de productos</h3><p class="muted">Stock, variantes, marcas y precios con actualizaciones rápidas.</p></div>
-          <div class="card"><h3>Compras con OCR</h3><p class="muted">Lee e interpreta facturas para acelerar carga y actualizar stock.</p></div>
+          <div class="card"><h3>Compras con OCR</h3><p class="muted">Lee e interpreta facturas para acelerar la carga.</p></div>
           <div class="card"><h3>Ventas con ticket</h3><p class="muted">Impresoras térmicas Bluetooth (58 mm) y medios de pago.</p></div>
-          <div class="card"><h3>Cuenta corriente</h3><p class="muted">Pagos, saldos y movimientos de clientes.</p></div>
+          <div class="card"><h3>Cuenta corriente</h3><p class="muted">Movimientos, saldos y gestión de clientes.</p></div>
           <div class="card"><h3>Ofertas y precios</h3><p class="muted">% o monto, combos 2×1, 3×2 y control de márgenes.</p></div>
           <div class="card"><h3>Analíticas</h3><p class="muted">Resultados, rentabilidad y valorización de stock.</p></div>
         </div>
       </div>
-      <div class="card">
-        <img class="mod-img" src="/assets/screens/home.webp" alt="Pantalla principal de ACIA" loading="lazy" decoding="async" />
-      </div>
+      <div class="home-shot" role="img" aria-label="Pantalla principal de ACIA"></div>
     </div>
   </section>
 
@@ -194,7 +200,7 @@
         <h2>Alta por IA (foto + OCR)</h2>
         <p class="muted">Cargá productos nuevos en segundos sacando una foto: la IA reconoce texto e imágenes y completa los campos clave automáticamente.</p>
         <ul class="list">
-          <li><b>Foto + OCR:</b> reconoce marca, nombre, presentación, contenido y EAN.</li>
+          <li><b>Foto + OCR:</b> marca, nombre, presentación, contenido y EAN.</li>
           <li><b>Clasificación automática:</b> sugiere familia y subfamilia.</li>
           <li><b>Más veloz:</b> actualizá precios y márgenes con menos errores.</li>
           <li><b>Normaliza unidades:</b> ml, g, pack, etc.</li>
@@ -207,61 +213,101 @@
     </div>
   </section>
 
-  <!-- Multiusuario & Multidispositivo -->
+  <!-- Multiusuario & Multidispositivo (ACIA Ventas) -->
   <section id="multi" class="section">
     <div class="container">
       <h2>Multiusuario & Multidispositivo</h2>
       <div class="twocol">
         <div>
-          <p class="muted">ACIA es multiusuario y multidispositivo. Podés administrar tu negocio desde el dispositivo principal y sumar celulares/tablets para vender con <b>ACIA Ventas</b>, todo sincronizado a través de la nube.</p>
+          <p class="muted">ACIA es multiusuario y multidispositivo. Administrás desde el equipo principal y sumás celulares/tablets para vender con <b>ACIA Ventas</b>, todo sincronizado por la nube.</p>
           <ul class="list">
-            <li><b>Usuarios y roles:</b> asigná permisos según tareas.</li>
-            <li><b>Ventas desde otros dispositivos:</b> cada vendedor factura desde su teléfono.</li>
-            <li><b>Sincronización automática:</b> operaciones incluso sin internet; al reconectar, se sube todo.</li>
+            <li><b>Usuarios y roles:</b> permisos según tareas.</li>
+            <li><b>Vendedores móviles:</b> cada vendedor factura desde su teléfono.</li>
+            <li><b>Offline real:</b> se puede operar sin internet y al reconectar se sincroniza.</li>
             <li><b>Impresión inalámbrica:</b> tickets y etiquetas por Bluetooth.</li>
           </ul>
         </div>
         <div class="card">
-          <img class="mod-img" src="/assets/screens/ventas.webp" alt="ACIA Ventas en acción" loading="lazy" decoding="async" />
+          <!-- Reemplazá este archivo con tu imagen para web -->
+          <img class="mod-img" src="/assets/acia-ventas.webp" alt="ACIA Ventas" loading="lazy" decoding="async" />
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Ventajas (texto mejorado a partir del folleto) -->
+  <!-- Manual -->
+  <section id="manual" class="section">
+    <div class="container">
+      <h2>Manual de usuario</h2>
+      <div class="card">
+        <p class="muted">Descargá el manual completo con capturas y paso a paso.</p>
+        <p class="cta-row">
+          <!-- Cambiá la URL cuando lo subas (PDF) -->
+          <a class="btn primary" href="/manual/ACIA-Manual.pdf" target="_blank" rel="noopener">Abrir manual (PDF)</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Videos -->
+  <section id="videos" class="section">
+    <div class="container">
+      <h2>Videos tutoriales</h2>
+      <div class="grid3">
+        <!-- Placeholders: reemplazá href y títulos cuando subas los videos -->
+        <div class="card">
+          <h3>Instalación y primeros pasos</h3>
+          <p class="muted">Configuración inicial y recorrido por el Home.</p>
+          <p><a class="btn ghost" href="https://www.youtube.com/" target="_blank" rel="noopener">Ver video</a></p>
+        </div>
+        <div class="card">
+          <h3>Alta por IA</h3>
+          <p class="muted">Cómo cargar productos desde fotos y OCR.</p>
+          <p><a class="btn ghost" href="https://www.youtube.com/" target="_blank" rel="noopener">Ver video</a></p>
+        </div>
+        <div class="card">
+          <h3>ACIA Ventas</h3>
+          <p class="muted">Vender desde otros dispositivos y sincronizar.</p>
+          <p><a class="btn ghost" href="https://www.youtube.com/" target="_blank" rel="noopener">Ver video</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ventajas -->
   <section id="ventajas" class="section">
     <div class="container">
       <h2>¿Por qué elegir ACIA?</h2>
       <div class="grid3">
         <div class="card">
           <h3>Arranque fácil</h3>
-          <p class="muted">Instalamos el sistema vacío y ya podés trabajar desde el primer día. Cargás los productos al vender o recibir, y todo queda guardado automáticamente.</p>
+          <p class="muted">Empezá a trabajar desde el primer día y completá sobre la marcha.</p>
         </div>
         <div class="card">
           <h3>Maximizá tu rentabilidad</h3>
-          <p class="muted">Control de márgenes por producto y actualizaciones masivas de precios, al instante.</p>
+          <p class="muted">Control de márgenes por producto y cambios masivos al instante.</p>
         </div>
         <div class="card">
           <h3>Ahorra horas</h3>
-          <p class="muted">OCR en compras, clasificación automática y acciones en un toque para acelerar tu operación.</p>
+          <p class="muted">OCR en compras, clasificación automática y flujos simples.</p>
         </div>
         <div class="card">
           <h3>Minimizá pérdidas</h3>
-          <p class="muted">Identificá motivos de merma y tomá decisiones informadas para reducirlas.</p>
+          <p class="muted">Identificá mermas y tomá decisiones informadas.</p>
         </div>
         <div class="card">
-          <h3>Informes profesionales</h3>
-          <p class="muted">Ventas, resultados, rentabilidad, valorización de stock y más, listos para actuar.</p>
+          <h3>Informes útiles</h3>
+          <p class="muted">Resultados, rentabilidad y valorización de stock listos para actuar.</p>
         </div>
         <div class="card">
           <h3>Siempre actualizado</h3>
-          <p class="muted">Mejoras automáticas incluidas en tu suscripción y soporte humano cercano.</p>
+          <p class="muted">Mejoras automáticas y soporte humano.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Precio -->
+  <!-- Precio (solo suscripción) -->
   <section id="precio" class="section">
     <div class="container twocol">
       <div>
@@ -271,9 +317,6 @@
           <p class="pill">Suscripción mensual</p>
           <p class="price">$19.000</p>
           <p class="muted">Incluye hosting, soporte y actualizaciones.</p>
-          <hr style="border:none;border-top:1px solid var(--line);margin:12px 0" />
-          <p class="pill">Instalación + Capacitación</p>
-          <p class="muted">Pago en <b>3 cuotas</b> accesibles.</p>
           <div class="cta-row" style="margin-top:8px">
             <a class="btn primary" href="https://wa.me/5491168291409" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">Consultar por WhatsApp</a>
             <a class="btn ghost" href="mailto:soporte@acia.com.ar">Escribir por email</a>
@@ -283,10 +326,10 @@
       <div class="card">
         <ul class="list" style="margin:0">
           <li><b>Multiusuario</b> con permisos por rol.</li>
-          <li><b>Multidispositivo</b> con ACIA Ventas para facturar desde celulares.</li>
-          <li><b>Sincronización en la nube</b> y operación offline con posterior subida.</li>
+          <li><b>Multidispositivo</b> con ACIA Ventas para vender desde celulares.</li>
+          <li><b>Sincronización en la nube</b> + operación offline con posterior subida.</li>
           <li><b>Impresión Bluetooth</b> de tickets y etiquetas.</li>
-          <li><b>Exportá y compartí</b> catálogo, reportes e históricos por WhatsApp u otros medios.</li>
+          <li><b>Exportá y compartí</b> catálogo, reportes e históricos.</li>
         </ul>
       </div>
     </div>
@@ -300,7 +343,7 @@
         <details><summary>¿La app funciona sin internet?</summary><p class="muted">Sí. Podés operar ventas y stock en local. Al reconectarte, se sincroniza con la nube.</p></details>
         <details><summary>¿Cómo se imprime el ticket?</summary><p class="muted">Con impresoras térmicas Bluetooth compatibles (58 mm).</p></details>
         <details><summary>¿Puedo migrar mis productos actuales?</summary><p class="muted">Sí, podés importarlos y usar el módulo de IA para completar datos.</p></details>
-        <details><summary>¿Qué necesito para empezar?</summary><p class="muted">Un dispositivo Android y coordinar la instalación/capacitación. La suscripción es mensual.</p></details>
+        <details><summary>¿Qué necesito para empezar?</summary><p class="muted">Un Android y coordinar el alta. La suscripción es mensual.</p></details>
       </div>
     </div>
   </section>
