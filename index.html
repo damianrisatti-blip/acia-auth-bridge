@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>ACIA – Administración Comercial por Inteligencia Artificial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Sistema integral de gestión y ventas con inteligencia artificial para comercios: stock, compras con OCR, ventas con ticket Bluetooth, cuenta corriente y analíticas." />
+  <link rel="icon" href="/assets/logo-color.png" />
+  <meta property="og:title" content="ACIA – Administración Comercial por IA" />
+  <meta property="og:description" content="Gestión de productos, ventas, compras con OCR, cuenta corriente y analíticas. Todo sincronizado en la nube." />
+  <meta property="og:url" content="https://acia.com.ar" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://acia.com.ar/assets/logo-color.png" />
+  <meta name="theme-color" content="#0B74DE" />
+  <style>
+    :root{
+      --bg:#ffffff; --fg:#0b1220; --muted:#5e6b85; --card:#f6f8fb;
+      --line:#e7ecf5; --accent:#0B74DE; --accent-2:#0aa77f;
+      --shadow:0 10px 30px rgba(10,30,80,.08);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#0a0f1f; --fg:#e8eefc; --muted:#b8c2d9; --card:#0f1730; --line:#1f2a4a;
+        --shadow:0 10px 30px rgba(0,0,0,.35);
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;line-height:1.55}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    header{position:sticky;top:0;backdrop-filter:saturate(180%) blur(8px);background:color-mix(in srgb, var(--bg) 86%, transparent);border-bottom:1px solid var(--line);z-index:40}
+    .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand img{width:40px;height:40px;border-radius:10px}
+    .brand b{font-size:18px}
+    .navlinks{display:flex;gap:18px;align-items:center}
+    .navlinks a{color:var(--fg);opacity:.9}
+    .btn{display:inline-block;border:1px solid var(--accent);color:var(--fg);padding:10px 14px;border-radius:12px;text-decoration:none;transition:.2s;box-shadow:var(--shadow)}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn.ghost{background:transparent}
+    .btn.success{background:var(--accent-2);border-color:var(--accent-2);color:#fff}
+    .hero{padding:56px 0 24px}
+    .hero .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}
+    .headline{font-size:clamp(28px,4.2vw,44px);margin:.2em 0}
+    .sub{color:var(--muted);max-width:48ch}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+    .features{padding:30px 0 16px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .feat h3{margin:.2em 0;font-size:18px}
+    .muted{color:var(--muted)}
+    .section{padding:40px 0}
+    .section h2{font-size:28px;margin:0 0 10px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:12px;color:var(--muted)}
+    .list{display:grid;gap:10px}
+    .module{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+    .module h4{margin:.2em 0}
+    .cta-band{padding:26px;border:1px dashed var(--line);border-radius:16px;text-align:center}
+    .faq{display:grid;gap:14px}
+    details{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card)}
+    summary{cursor:pointer;font-weight:600}
+    footer{border-top:1px solid var(--line);padding:28px 0;margin-top:30px}
+    .copy{color:var(--muted);font-size:13px}
+    /* mobile */
+    @media (max-width:880px){
+      .hero .grid{grid-template-columns:1fr}
+      .grid3{grid-template-columns:1fr}
+      .grid4{grid-template-columns:1fr 1fr}
+      .navlinks{display:none}
+      .menu-btn{display:inline-flex}
+    }
+    .menu-btn{display:none;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--card)}
+  </style>
+  <script>
+    // Menú móvil simple (muestra/oculta enlaces)
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const btn=document.querySelector('#menuBtn'); const links=document.querySelector('#links');
+      btn?.addEventListener('click', ()=> links.style.display = links.style.display==='flex' ? 'none' : 'flex');
+    });
+  </script>
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"ACIA",
+    "operatingSystem":"Android",
+    "applicationCategory":"BusinessApplication",
+    "offers":{"@type":"Offer","price":"0","priceCurrency":"ARS"},
+    "aggregateRating":{"@type":"AggregateRating","ratingValue":"5.0","ratingCount":"12"},
+    "url":"https://acia.com.ar",
+    "image":"https://acia.com.ar/assets/logo-color.png",
+    "publisher":{"@type":"Organization","name":"ACIA"}
+  }
+  </script>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="/">
+      <img src="/assets/logo_acia_128.png" alt="ACIA" />
+      <b>ACIA</b>
+    </a>
+    <nav class="navlinks" id="links">
+      <a href="#funciones">Funciones</a>
+      <a href="#modulos">Módulos</a>
+      <a href="#faq">FAQs</a>
+      <a href="/privacy">Privacidad</a>
+      <a class="btn ghost" href="mailto:soporte@acia.com.ar">Contacto</a>
+    </nav>
+    <button id="menuBtn" class="menu-btn" aria-label="Abrir menú">☰</button>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container grid grid-hero">
+      <div>
+        <span class="badge">🚀 Nueva • Gestión inteligente para comercios</span>
+        <h1 class="headline">Administrá tu negocio con <span style="color:var(--accent)">Inteligencia Artificial</span></h1>
+        <p class="sub">**ACIA** centraliza productos, ventas, compras con OCR, ofertas, cuenta corriente y analíticas — todo sincronizado en la nube y listo para trabajar desde múltiples dispositivos.</p>
+        <div class="cta">
+          <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.acia.app" target="_blank" rel="noopener">Descargar en Google Play</a>
+          <a class="btn success" href="mailto:soporte@acia.com.ar">Solicitar demo</a>
+          <a class="btn ghost" href="#funciones">Ver funciones</a>
+        </div>
+      </div>
+      <div class="card">
+        <!-- Placeholder de “mockup” simple -->
+        <div style="display:grid;gap:10px">
+          <div style="height:16px;width:40%;background:var(--line);border-radius:6px"></div>
+          <div style="height:180px;border:1px solid var(--line);border-radius:12px;background:var(--bg);display:grid;place-items:center">
+            <span class="muted">Colocá aquí una captura de la app</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="height:90px;border:1px solid var(--line);border-radius:12px;background:var(--bg);display:grid;place-items:center"><span class="muted">Venta</span></div>
+            <div style="height:90px;border:1px solid var(--line);border-radius:12px;background:var(--bg);display:grid;place-items:center"><span class="muted">Productos</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="funciones" class="features">
+    <div class="container">
+      <h2>Funciones principales</h2>
+      <p class="muted">Todo lo que necesitás para operar tu comercio, en una sola app.</p>
+      <div class="grid3">
+        <div class="card feat">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <h3>Catálogo de productos</h3>
+          <p class="muted">Gestión de stock, variantes, marcas y precios con actualizaciones rápidas.</p>
+        </div>
+        <div class="card feat">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <h3>Compras con OCR</h3>
+          <p class="muted">Capturá facturas y listas con reconocimiento de texto para acelerar la carga.</p>
+        </div>
+        <div class="card feat">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <h3>Ventas con ticket</h3>
+          <p class="muted">Punto de venta ágil y compatible con impresoras Bluetooth térmicas.</p>
+        </div>
+        <div class="card feat">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M12 3v18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <h3>Cuenta corriente</h3>
+          <p class="muted">Pagos, saldos y movimientos de clientes siempre al día.</p>
+        </div>
+        <div class="card feat">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 19h16M4 5h16M7 5v14M17 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <h3>Ofertas y precios</h3>
+          <p class="muted">Promos por % o monto, combos 2×1, 3×2 y control de márgenes.</p>
+        </div>
+        <div class="card feat">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v10H4z" stroke="currentColor" stroke-width="2"/><path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <h3>Analíticas</h3>
+          <p class="muted">Rentabilidad por familia, proveedor y período. Decisiones con datos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODULOS -->
+  <section id="modulos" class="section">
+    <div class="container">
+      <h2>Módulos incluidos</h2>
+      <div class="grid4">
+        <div class="module"><h4>Productos</h4><p class="muted">Familias, subfamilias, EAN, variantes.</p></div>
+        <div class="module"><h4>Compras</h4><p class="muted">Manual + Inteligente (OCR), proveedores.</p></div>
+        <div class="module"><h4>Ventas</h4><p class="muted">Carrito, medios de pago, ticket Bluetooth.</p></div>
+        <div class="module"><h4>Clientes</h4><p class="muted">Cuenta corriente, pagos y recibos.</p></div>
+        <div class="module"><h4>Ofertas</h4><p class="muted">Descuentos, combos y vigencias.</p></div>
+        <div class="module"><h4>Stock</h4><p class="muted">Entradas/salidas/ajustes, pesables.</p></div>
+        <div class="module"><h4>Sync</h4><p class="muted">Supabase en la nube, multi-dispositivo.</p></div>
+        <div class="module"><h4>Reportes</h4><p class="muted">KPIs clave de tu negocio.</p></div>
+      </div>
+
+      <div class="cta-band" style="margin-top:18px">
+        <p><b>¿Listo para modernizar tu negocio?</b></p>
+        <p>
+          <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.acia.app" target="_blank" rel="noopener">Instalar ACIA</a>
+          <a class="btn ghost" href="mailto:soporte@acia.com.ar">Hablar con soporte</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="container">
+      <h2>Preguntas frecuentes</h2>
+      <div class="faq">
+        <details>
+          <summary>¿La app funciona sin internet?</summary>
+          <p class="muted">Sí. Podés operar ventas y stock en local. Al reconectarte, se sincroniza automáticamente con la nube.</p>
+        </details>
+        <details>
+          <summary>¿Cómo se imprime el ticket?</summary>
+          <p class="muted">Con impresoras térmicas Bluetooth compatibles (58 mm). Configurás una vez y queda listo.</p>
+        </details>
+        <details>
+          <summary>¿Puedo migrar mis productos actuales?</summary>
+          <p class="muted">Sí, podés importarlos y además usar el módulo de IA para completar marca, variante y clasificación.</p>
+        </details>
+        <details>
+          <summary>¿Qué necesito para empezar?</summary>
+          <p class="muted">Un dispositivo Android, crear tu usuario y (opcional) configurar la suscripción vía MercadoPago.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container" style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between">
+    <div style="display:flex;gap:10px;align-items:center">
+      <img src="/assets/logo-color.png" alt="ACIA" width="28" height="28" style="border-radius:6px" />
+      <span class="copy">© 2025 ACIA – Administración Comercial por IA</span>
+    </div>
+    <div class="copy">
+      <a href="/privacy">Política de privacidad</a> ·
+      <a href="mailto:soporte@acia.com.ar">soporte@acia.com.ar</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
