@@ -95,18 +95,34 @@
     footer{border-top:1px solid var(--line);padding:20px 0;margin-top:16px}
     .copy{color:var(--muted);font-size:13px}
 
-    /* --- Drawer móvil (menú vertical) --- */
+    /* --- Drawer móvil (vertical desde la DERECHA) --- */
     .hamburger{display:none; align-items:center; justify-content:center; width:44px; height:44px;
       border:1px solid var(--line); border-radius:10px; background:var(--card)}
     .hamburger span{display:block; width:20px; height:2px; background:var(--fg); position:relative}
     .hamburger span::before,.hamburger span::after{content:""; position:absolute; left:0; width:20px; height:2px; background:var(--fg)}
     .hamburger span::before{top:-6px}.hamburger span::after{top:6px}
 
-    .drawer-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.35); backdrop-filter:blur(2px);
-      opacity:0; pointer-events:none; transition:.2s; z-index:60}
-    .drawer{position:fixed; inset:0 auto 0 0; width:min(86vw,320px); background:var(--bg);
-      border-right:1px solid var(--line); transform:translateX(-100%); transition:transform .25s ease; z-index:70;
-      display:flex; flex-direction:column; padding:14px}
+    /* Backdrop más notorio */
+    .drawer-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.45);         /* más oscuro para separar el fondo */
+      backdrop-filter:blur(2px);
+      opacity:0; pointer-events:none; transition:.2s; z-index:60;
+    }
+
+    /* Drawer desde la DERECHA con panel semitransparente y blur */
+    .drawer{
+      position:fixed; inset:0 0 0 auto;   /* ancla a la derecha */
+      width:min(86vw,320px);
+      background:color-mix(in srgb, var(--bg) 82%, transparent);
+      -webkit-backdrop-filter:blur(10px) saturate(140%);
+      backdrop-filter:blur(10px) saturate(140%);
+      border-left:1px solid var(--line);
+      box-shadow:-18px 0 40px rgba(0,0,0,.18);
+      transform:translateX(100%);         /* oculto a la derecha */
+      transition:transform .25s ease; z-index:70;
+      display:flex; flex-direction:column; padding:14px
+    }
     .drawer header{display:flex; align-items:center; gap:10px; height:50px; border-bottom:1px solid var(--line)}
     .drawer nav{display:flex; flex-direction:column; padding:10px 0; gap:6px}
     .drawer nav a{padding:10px 8px; border-radius:10px}
@@ -421,7 +437,7 @@
     const btn = document.getElementById('hamburger');
     const drawer = document.getElementById('drawer');
     const backdrop = document.getElementById('drawerBackdrop');
-    const links = (drawer || document).querySelectorAll ? drawer.querySelectorAll('a') : [];
+    const links = drawer.querySelectorAll('a');
 
     function openDrawer(){
       body.classList.add('drawer-open','no-scroll');
