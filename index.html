@@ -28,7 +28,7 @@
     .container{max-width:1100px;margin:0 auto;padding:0 20px}
 
     /* Header */
-    header{position:sticky;top:0;backdrop-filter:saturate(180%) blur(8px);background:color-mix(in srgb, var(--bg) 16%, transparent);border-bottom:1px solid var(--line);z-index:40}
+    header{position:sticky;top:0;backdrop-filter:saturate(180%) blur(8px);background:color-mix(in srgb, var(--bg) 86%, transparent);border-bottom:1px solid var(--line);z-index:40}
     .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
     .brand img{height:28px;width:auto;display:block}
     .navlinks{display:flex;gap:18px;align-items:center}
@@ -95,33 +95,34 @@
     footer{border-top:1px solid var(--line);padding:20px 0;margin-top:16px}
     .copy{color:var(--muted);font-size:13px}
 
-    /* --- Drawer móvil (vertical desde la DERECHA) --- */
+    /* --- Drawer móvil (vertical desde la DERECHA, fondo BLANCO sólido) --- */
     .hamburger{display:none; align-items:center; justify-content:center; width:44px; height:44px;
       border:1px solid var(--line); border-radius:10px; background:var(--card)}
     .hamburger span{display:block; width:20px; height:2px; background:var(--fg); position:relative}
     .hamburger span::before,.hamburger span::after{content:""; position:absolute; left:0; width:20px; height:2px; background:var(--fg)}
     .hamburger span::before{top:-6px}.hamburger span::after{top:6px}
 
-    /* Backdrop más notorio */
+    /* Capa oscura detrás del drawer */
     .drawer-backdrop{
       position:fixed; inset:0;
-      background:rgba(0,0,0,.55);         /* más oscuro para separar el fondo */
-      backdrop-filter:blur(2px);
+      background:rgba(0,0,0,.5);              /* más notorio para separar el fondo */
       opacity:0; pointer-events:none; transition:.2s; z-index:60;
     }
 
-    /* Drawer desde la DERECHA con panel semitransparente y blur */
+    /* Drawer a la derecha: blanco 100%, altura completa y scroll interno */
     .drawer{
-      position:fixed; inset:0 0 0 auto;   /* ancla a la derecha */
+      position:fixed; top:0; right:0; bottom:0; left:auto;
       width:min(86vw,320px);
-      background:#ffffff; 
-      -webkit-backdrop-filter:blur(6px) saturate(120%);
-      backdrop-filter:none;
+      background:#ffffff;                      /* fondo sólido (sin transparencia) */
       border-left:1px solid var(--line);
-      box-shadow:-18px 0 40px rgba(0,0,0,.55);
-      transform:translateX(100%);         /* oculto a la derecha */
+      box-shadow:-18px 0 40px rgba(0,0,0,.18);
+      transform:translateX(100%);              /* oculto a la derecha */
       transition:transform .25s ease; z-index:70;
-      display:flex; flex-direction:column; padding:14px
+
+      height:100vh;                             /* cubre toda la altura */
+      overflow:auto;                            /* scroll interno si el contenido es largo */
+      -webkit-overflow-scrolling:touch;         /* suave en iOS */
+      display:flex; flex-direction:column; padding:14px;
     }
     .drawer header{display:flex; align-items:center; gap:10px; height:50px; border-bottom:1px solid var(--line)}
     .drawer nav{display:flex; flex-direction:column; padding:10px 0; gap:6px}
