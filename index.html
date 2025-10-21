@@ -14,23 +14,21 @@
   <meta name="theme-color" content="#0B74DE" />
   <style>
     :root{
-      --bg:#ffffff; --fg:#0b1220; --muted:#5e6b85; --card:#f6f8fb;
-      --line:#e7ecf5; --accent:#0B74DE; --accent-2:#0aa77f; --shadow:0 10px 30px rgba(10,30,80,.08);
+      --bg:#ffffff; --fg:#0b1220; --muted:#5e6b85; --card:#f6f8fb; --line:#e7ecf5;
+      --accent:#0B74DE; --accent-2:#0aa77f; --shadow:0 10px 30px rgba(10,30,80,.08);
     }
     @media (prefers-color-scheme: dark){
       :root{ --bg:#0a0f1f; --fg:#e8eefc; --muted:#b8c2d9; --card:#0f1730; --line:#1f2a4a; --shadow:0 10px 30px rgba(0,0,0,.35); }
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;line-height:1.55}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;line-height:1.55}
     a{color:var(--accent);text-decoration:none}
     a:hover{text-decoration:underline}
     .container{max-width:1100px;margin:0 auto;padding:0 20px}
 
-    /* Header */
     header{position:sticky;top:0;backdrop-filter:saturate(180%) blur(8px);background:color-mix(in srgb, var(--bg) 86%, transparent);border-bottom:1px solid var(--line);z-index:40}
     .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand img{height:28px;width:auto;display:block;border-radius:6px} /* ✅ proporción conservada */
+    .brand img{height:28px;width:auto;display:block;border-radius:6px}
     .navlinks{display:flex;gap:18px;align-items:center}
     .btn{display:inline-block;border:1px solid var(--accent);color:var(--fg);padding:10px 14px;border-radius:12px;text-decoration:none;transition:.2s;box-shadow:var(--shadow)}
     .btn:hover{transform:translateY(-1px)}
@@ -40,58 +38,45 @@
     .menu-btn{display:none;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--card)}
     @media (max-width:880px){ .navlinks{display:none} .menu-btn{display:inline-flex} }
 
-    /* HERO */
-    .hero{padding:26px 0 18px}
-    .hero-inner{display:grid;gap:16px;justify-items:center;text-align:center}
-    .hero-logo{
-      width:min(620px, 82vw); /* ✅ más chico */
-      height:auto;            /* ✅ mantiene proporción */
-      display:block;
-      filter: drop-shadow(0 12px 32px rgba(10,30,80,.08));
-    }
-    .headline{font-size:clamp(22px,3.6vw,28px);margin:8px 0 2px}
+    .hero{padding:24px 0 18px}
+    .hero-inner{display:grid;gap:14px;justify-items:center;text-align:center}
+    .hero-logo{width:min(480px, 80vw);height:auto;display:block;filter: drop-shadow(0 12px 32px rgba(10,30,80,.08))}
+    .headline{font-size:clamp(22px,3.6vw,28px);margin:6px 0 2px}
     .sub{color:var(--muted);max-width:70ch;margin:0 auto}
-    .cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    .hero-shot{margin-top:14px}
+    .hero-shot img{ width:min(980px, 92vw); height:auto; border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); background:var(--bg); }
 
-    /* Captura principal */
-    .hero-shot{margin-top:16px}
-    .hero-shot img{
-      width:min(980px, 92vw);
-      height:auto;           /* ✅ sin deformar */
-      border:1px solid var(--line);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      background:var(--bg);
-    }
-
-    .section{padding:34px 0}
+    .section{padding:32px 0}
     .section h2{font-size:28px;margin:0 0 10px}
     .muted{color:var(--muted)}
     .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
 
-    /* Grid de funciones y módulos */
     .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     @media (max-width:980px){ .grid4{grid-template-columns:repeat(3,1fr)} }
     @media (max-width:720px){ .grid3{grid-template-columns:1fr} .grid4{grid-template-columns:1fr 1fr} }
 
-    /* Tarjeta de módulo con screenshot */
     .module{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
     .mod-img{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
     .module h4{margin:.6em 0 .2em}
 
-    .cta-band{padding:24px;border:1px dashed var(--line);border-radius:16px;text-align:center;margin-top:18px}
+    .cta-band{padding:22px;border:1px dashed var(--line);border-radius:16px;text-align:center;margin-top:16px}
 
-    /* FAQ */
+    .twocol{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:center}
+    @media (max-width:880px){ .twocol{grid-template-columns:1fr} }
+
+    .list{display:grid;gap:10px}
+    .list li{margin-left:18px}
+
     .faq{display:grid;gap:14px}
     details{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card)}
     summary{cursor:pointer;font-weight:600}
 
-    footer{border-top:1px solid var(--line);padding:26px 0;margin-top:28px}
+    footer{border-top:1px solid var(--line);padding:24px 0;margin-top:26px}
     .copy{color:var(--muted);font-size:13px}
   </style>
   <script>
-    // Menú móvil
     document.addEventListener('DOMContentLoaded', ()=>{
       const btn=document.querySelector('#menuBtn'); const links=document.querySelector('#links');
       btn?.addEventListener('click', ()=> links.style.display = links.style.display==='flex' ? 'none' : 'flex');
@@ -102,13 +87,14 @@
 
 <header>
   <div class="container nav">
-    <!-- ✅ Solo logo, sin texto redundante -->
     <a class="brand" href="/" aria-label="Inicio ACIA">
-      <img src="/assets/Logo-sin-bajada-color.png" alt="ACIA" />
+      <img src="/assets/Logo-sin-bajada-color.png" alt="ACIA" loading="eager" decoding="async" />
     </a>
     <nav class="navlinks" id="links">
       <a href="#funciones">Funciones</a>
       <a href="#modulos">Módulos</a>
+      <a href="#alta-ia">Alta por IA</a>
+      <a href="#ventajas">Ventajas</a>
       <a href="#faq">FAQs</a>
       <a href="/privacy">Privacidad</a>
       <a class="btn ghost" href="mailto:soporte@acia.com.ar">Contacto</a>
@@ -118,12 +104,11 @@
 </header>
 
 <main>
-  <!-- HERO con logo + captura principal -->
   <section class="hero">
     <div class="container hero-inner">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="/assets/Logo-monocromo-azul.png" />
-        <img class="hero-logo" src="/assets/Logo-color.png" alt="ACIA – Administración Comercial con Inteligencia Artificial" />
+        <img class="hero-logo" src="/assets/Logo-color.png" alt="ACIA – Administración Comercial con Inteligencia Artificial" loading="eager" decoding="async" />
       </picture>
 
       <h1 class="headline">Administración Comercial con Inteligencia Artificial</h1>
@@ -134,14 +119,12 @@
         <a class="btn ghost" href="#modulos">Ver módulos</a>
       </div>
 
-      <!-- 🔽 Subí tu captura principal como /assets/screens/home.png -->
       <div class="hero-shot">
-        <img src="/assets/screens/home.png" alt="Pantalla principal de ACIA" />
+        <img src="/assets/screens/home.webp" alt="Pantalla principal de ACIA" loading="lazy" decoding="async" />
       </div>
     </div>
   </section>
 
-  <!-- Funciones -->
   <section id="funciones" class="section">
     <div class="container">
       <h2>Funciones principales</h2>
@@ -157,42 +140,37 @@
     </div>
   </section>
 
-  <!-- Módulos con capturas -->
   <section id="modulos" class="section">
     <div class="container">
       <h2>Módulos incluidos</h2>
       <div class="grid4">
         <div class="module">
-          <img class="mod-img" src="/assets/screens/productos.png" alt="Productos" />
-          <h4>Productos</h4><p class="muted">Familias, subfamilias, EAN, variantes.</p>
-        </div>
-        <div class="module">
-          <img class="mod-img" src="/assets/screens/compras.png" alt="Compras" />
-          <h4>Compras</h4><p class="muted">Manual + Inteligente (OCR), proveedores.</p>
-        </div>
-        <div class="module">
-          <img class="mod-img" src="/assets/screens/ventas.png" alt="Ventas" />
+          <img class="mod-img" src="/assets/screens/ventas.webp" alt="Ventas" loading="lazy" decoding="async" />
           <h4>Ventas</h4><p class="muted">Carrito, medios de pago, ticket Bluetooth.</p>
         </div>
         <div class="module">
-          <img class="mod-img" src="/assets/screens/clientes.png" alt="Clientes" />
-          <h4>Clientes</h4><p class="muted">Cuenta corriente, pagos y recibos.</p>
+          <img class="mod-img" src="/assets/screens/productos.webp" alt="Productos (listado y filtros)" loading="lazy" decoding="async" />
+          <h4>Productos</h4><p class="muted">Búsqueda, filtros avanzados y variantes.</p>
         </div>
         <div class="module">
-          <img class="mod-img" src="/assets/screens/ofertas.png" alt="Ofertas" />
-          <h4>Ofertas</h4><p class="muted">Descuentos, combos y vigencias.</p>
+          <img class="mod-img" src="/assets/screens/productos2.webp" alt="Productos (detalle)" loading="lazy" decoding="async" />
+          <h4>Productos (detalle)</h4><p class="muted">Cards con precio, stock, proveedor e IVA.</p>
         </div>
         <div class="module">
-          <img class="mod-img" src="/assets/screens/stock.png" alt="Stock" />
-          <h4>Stock</h4><p class="muted">Entradas/salidas/ajustes, pesables.</p>
+          <img class="mod-img" src="/assets/screens/compras.webp" alt="Compras" loading="lazy" decoding="async" />
+          <h4>Compras</h4><p class="muted">Manual + Inteligente (OCR), proveedores y sugeridos.</p>
         </div>
         <div class="module">
-          <img class="mod-img" src="/assets/screens/sync.png" alt="Sync" />
-          <h4>Sync</h4><p class="muted">Supabase en la nube, multi-dispositivo.</p>
+          <img class="mod-img" src="/assets/screens/clientes.webp" alt="Cuenta corriente" loading="lazy" decoding="async" />
+          <h4>Cuenta corriente</h4><p class="muted">Movimientos, saldos y gestión de clientes.</p>
         </div>
         <div class="module">
-          <img class="mod-img" src="/assets/screens/reportes.png" alt="Reportes" />
-          <h4>Reportes</h4><p class="muted">KPIs clave de tu negocio.</p>
+          <img class="mod-img" src="/assets/screens/ofertas.webp" alt="Ofertas" loading="lazy" decoding="async" />
+          <h4>Ofertas</h4><p class="muted">Promos %/monto, combos y afiches listos para compartir.</p>
+        </div>
+        <div class="module">
+          <img class="mod-img" src="/assets/screens/analisis.webp" alt="Análisis" loading="lazy" decoding="async" />
+          <h4>Análisis</h4><p class="muted">Resultados, rentabilidad, valorización de stock.</p>
         </div>
       </div>
 
@@ -206,7 +184,42 @@
     </div>
   </section>
 
-  <!-- FAQ -->
+  <section id="alta-ia" class="section">
+    <div class="container twocol">
+      <div>
+        <h2>Alta por IA (foto + OCR)</h2>
+        <p class="muted">Cargá productos nuevos en segundos sacando una foto: la IA reconoce texto e imágenes y completa los campos clave automáticamente.</p>
+        <ul class="list">
+          <li><b>Foto + OCR:</b> reconoce marca, nombre, tamaño, EAN y variante.</li>
+          <li><b>Clasificación automática:</b> sugiere familia y subfamilia.</li>
+          <li><b>Precios más rápidos:</b> calcula márgenes sugeridos (o usá los tuyos).</li>
+          <li><b>Evita errores:</b> normaliza unidades (ml, g, pack, etc.).</li>
+          <li><b>Aprende con vos:</b> mejora con el historial de tus cargas.</li>
+        </ul>
+        <div class="cta" style="justify-content:flex-start">
+          <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.acia.app" target="_blank" rel="noopener">Probar alta por IA</a>
+        </div>
+      </div>
+      <div class="card">
+        <img class="mod-img" src="/assets/screens/productos2.webp" alt="Alta por IA y listado de productos" loading="lazy" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <section id="ventajas" class="section">
+    <div class="container">
+      <h2>¿Por qué elegir ACIA?</h2>
+      <div class="grid3">
+        <div class="card"><h3>Velocidad</h3><p class="muted">Cargá y actualizá productos 3× más rápido con IA + OCR.</p></div>
+        <div class="card"><h3>Control</h3><p class="muted">Márgenes, ofertas y stock en tiempo real, sin hojas sueltas.</p></div>
+        <div class="card"><h3>Simple</h3><p class="muted">Interfaz clara, impresoras Bluetooth y sincronización en la nube.</p></div>
+        <div class="card"><h3>Escalable</h3><p class="muted">Pensado para crecer: más locales, más dispositivos, más datos.</p></div>
+        <div class="card"><h3>Datos útiles</h3><p class="muted">Reportes accionables: rentabilidad, resultados y valorización.</p></div>
+        <div class="card"><h3>Soporte humano</h3><p class="muted">Acompañamiento cercano por correo y mejoras continuas.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section id="faq" class="section">
     <div class="container">
       <h2>Preguntas frecuentes</h2>
