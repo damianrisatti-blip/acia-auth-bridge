@@ -35,6 +35,7 @@
     .btn{display:inline-block;border:1px solid var(--accent);color:var(--fg);padding:8px 12px;border-radius:12px;text-decoration:none;transition:.2s}
     .btn:hover{transform:translateY(-1px)}
     .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn.success{background:var(--accent-2);color:#fff;border-color:var(--accent-2)}
     .btn.ghost{background:transparent}
 
     /* HERO */
@@ -43,6 +44,7 @@
     .hero-logo{width:min(360px, 64vw);height:auto;display:block}
     .headline{font-size:clamp(20px,3.2vw,26px);margin:4px 0 0}
     .sub{color:var(--muted);max-width:68ch;margin:0 auto}
+    .cta-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:8px}
 
     .section{padding:24px 0}
     .section h2{font-size:22px;margin:0 0 8px}
@@ -75,7 +77,7 @@
     @media (max-width:980px){ .mod-img{ max-width:240px; max-height:150px } }
     @media (max-width:720px){ .mod-img{ max-width:220px; max-height:140px } }
 
-    /* Home reducido y alineado con funciones */
+    /* Home reducido y alineado */
     .home-img{
       width:100%; max-width:320px; height:auto; max-height:520px;
       object-fit:contain; border:1px solid var(--line); border-radius:12px; background:var(--bg)
@@ -90,54 +92,24 @@
 
     .price{font-size:28px;font-weight:800;letter-spacing:.2px}
     .pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
-    .cta-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
-    footer{border-top:1px solid var(--line);padding:20px 0;margin-top:16px}
-    .copy{color:var(--muted);font-size:13px}
-
-    /* --- Drawer móvil (vertical desde la DERECHA, fondo BLANCO sólido) --- */
+    /* Drawer móvil */
     .hamburger{display:none; align-items:center; justify-content:center; width:44px; height:44px;
       border:1px solid var(--line); border-radius:10px; background:var(--card)}
     .hamburger span{display:block; width:20px; height:2px; background:var(--fg); position:relative}
     .hamburger span::before,.hamburger span::after{content:""; position:absolute; left:0; width:20px; height:2px; background:var(--fg)}
     .hamburger span::before{top:-6px}.hamburger span::after{top:6px}
 
-    /* Capa oscura detrás del drawer */
-    .drawer-backdrop{
-      position:fixed; inset:0;
-      background:rgba(0,0,0,.5);              /* más notorio para separar el fondo */
-      opacity:0; pointer-events:none; transition:.2s; z-index:60;
-    }
-
-    /* Drawer a la derecha: blanco 100%, altura completa y scroll interno */
-    .drawer{
-      position:fixed; top:0; right:0; bottom:0; left:auto;
-      width:min(86vw,320px);
-      background:#ffffff;                      /* fondo sólido (sin transparencia) */
-      border-left:1px solid var(--line);
-      box-shadow:-18px 0 40px rgba(0,0,0,.18);
-      transform:translateX(100%);              /* oculto a la derecha */
-      transition:transform .25s ease; z-index:70;
-
-      height:100vh;                             /* cubre toda la altura */
-      overflow:auto;                            /* scroll interno si el contenido es largo */
-      -webkit-overflow-scrolling:touch;         /* suave en iOS */
-      display:flex; flex-direction:column; padding:14px;
-    }
+    .drawer-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.5); opacity:0; pointer-events:none; transition:.2s; z-index:60;}
+    .drawer{position:fixed; top:0; right:0; bottom:0; left:auto; width:min(86vw,320px); background:#fff; border-left:1px solid var(--line); box-shadow:-18px 0 40px rgba(0,0,0,.18); transform:translateX(100%); transition:transform .25s ease; z-index:70; height:100vh; overflow:auto; -webkit-overflow-scrolling:touch; display:flex; flex-direction:column; padding:14px;}
     .drawer header{display:flex; align-items:center; gap:10px; height:50px; border-bottom:1px solid var(--line)}
     .drawer nav{display:flex; flex-direction:column; padding:10px 0; gap:6px}
     .drawer nav a{padding:10px 8px; border-radius:10px}
     .drawer footer{margin-top:auto; border-top:1px solid var(--line); padding-top:10px; font-size:14px; color:var(--muted)}
-
     .drawer-open .drawer{transform:none}
     .drawer-open .drawer-backdrop{opacity:1; pointer-events:auto}
     .no-scroll{overflow:hidden}
-
-    /* En móviles se oculta nav horizontal y aparece botón hamburguesa */
-    @media (max-width:880px){
-      .navlinks{display:none}
-      .hamburger{display:inline-flex}
-    }
+    @media (max-width:880px){ .navlinks{display:none} .hamburger{display:inline-flex} }
   </style>
 </head>
 <body>
@@ -148,12 +120,13 @@
       <img src="/assets/Logo-sin-bajada-color.png" alt="ACIA" loading="eager" decoding="async" />
     </a>
 
-    <!-- Menú horizontal (desktop) -->
+    <!-- Menú horizontal -->
     <nav class="navlinks" id="links">
       <a href="#funciones">Funciones</a>
       <a href="#modulos">Módulos</a>
       <a href="#alta-ia">Alta por IA</a>
       <a href="#multi">Multiusuario</a>
+      <a href="#descargas">Descargas</a>
       <a href="#manual">Manual</a>
       <a href="#videos">Videos</a>
       <a href="#ventajas">Ventajas</a>
@@ -162,7 +135,7 @@
       <a class="btn ghost" href="https://wa.me/5491168291409" target="_blank" rel="noopener">WhatsApp</a>
     </nav>
 
-    <!-- Botón hamburguesa (móvil/tablet) -->
+    <!-- Botón hamburguesa (móvil) -->
     <button id="hamburger" class="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="drawerNav">
       <span></span>
     </button>
@@ -180,6 +153,7 @@
       <a href="#modulos">Módulos</a>
       <a href="#alta-ia">Alta por IA</a>
       <a href="#multi">Multiusuario</a>
+      <a href="#descargas">Descargas</a>
       <a href="#manual">Manual</a>
       <a href="#videos">Videos</a>
       <a href="#ventajas">Ventajas</a>
@@ -202,10 +176,16 @@
       <h1 class="headline">La forma más simple e inteligente de gestionar tu comercio</h1>
       <p class="sub">Arrancás rápido: podés empezar vacío y cargar productos al vender o recibir. Todo sincronizado en la nube.</p>
       <div class="pill">Soporte humano y mejoras continuas</div>
+
+      <!-- CTA de descarga directo en el héroe -->
+      <div class="cta-row">
+        <a class="btn primary" href="/apk/acia.apk" download title="Descargar ACIA (APK)">⬇️ Descargar ACIA (principal)</a>
+        <a class="btn success" href="/apk/acia-ventas.apk" download title="Descargar ACIA Ventas (requiere ACIA)">⬇️ Descargar ACIA Ventas</a>
+      </div>
     </div>
   </section>
 
-  <!-- Funciones + Home (alineado y reducido) -->
+  <!-- Funciones + Home -->
   <section id="funciones" class="section">
     <div class="container twocol">
       <div>
@@ -263,7 +243,7 @@
     </div>
   </section>
 
-  <!-- Alta por IA (imagen chica y alineada) -->
+  <!-- Alta por IA -->
   <section id="alta-ia" class="section">
     <div class="container twocol">
       <div>
@@ -283,7 +263,7 @@
     </div>
   </section>
 
-  <!-- Multiusuario & Multidispositivo (ACIA Ventas) -->
+  <!-- Multiusuario -->
   <section id="multi" class="section">
     <div class="container">
       <h2>Multiusuario & Multidispositivo</h2>
@@ -300,6 +280,21 @@
         <div class="img-wrap">
           <img class="img-s" src="/assets/screens/acia-ventas.png" alt="ACIA Ventas" loading="lazy" decoding="async" />
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Descargas -->
+  <section id="descargas" class="section">
+    <div class="container">
+      <h2>Descargas</h2>
+      <div class="card">
+        <p class="muted">Instaladores directos (APK). Habilitá “Instalar apps de orígenes desconocidos” en Android.</p>
+        <div class="cta-row" style="margin-top:6px">
+          <a class="btn primary" href="/apk/acia.apk" download title="Descargar ACIA (APK)">⬇️ Descargar ACIA (principal)</a>
+          <a class="btn success" href="/apk/acia-ventas.apk" download title="Descargar ACIA Ventas (APK)">⬇️ Descargar ACIA Ventas</a>
+        </div>
+        <p class="muted" style="margin-top:8px">ACIA Ventas <b>requiere</b> que ACIA (principal) esté instalada.</p>
       </div>
     </div>
   </section>
@@ -419,7 +414,6 @@
 <footer>
   <div class="container" style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between">
     <div style="display:flex;gap:10px;align-items:center">
-      <!-- Logo con proporciones reales -->
       <img src="/assets/Logo-sin-bajada-color.png" alt="ACIA" height="28" />
       <span class="copy">© 2025 ACIA – Administración Comercial por IA</span>
     </div>
