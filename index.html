@@ -16,6 +16,7 @@
     :root{
       --bg:#ffffff; --fg:#0b1220; --muted:#5e6b85; --card:#f6f8fb; --line:#e7ecf5;
       --accent:#0B74DE; --accent-2:#0aa77f; --shadow:0 10px 30px rgba(10,30,80,.08);
+      --radius:14px;
     }
     @media (prefers-color-scheme: dark){
       :root{ --bg:#0a0f1f; --fg:#e8eefc; --muted:#b8c2d9; --card:#0f1730; --line:#1f2a4a; --shadow:0 10px 30px rgba(0,0,0,.35); }
@@ -31,7 +32,7 @@
     .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
     .brand img{height:28px;width:auto;display:block}
     .navlinks{display:flex;gap:18px;align-items:center}
-    .btn{display:inline-block;border:1px solid var(--accent);color:var(--fg);padding:10px 14px;border-radius:12px;text-decoration:none;transition:.2s;box-shadow:var(--shadow)}
+    .btn{display:inline-block;border:1px solid var(--accent);color:var(--fg);padding:8px 12px;border-radius:12px;text-decoration:none;transition:.2s}
     .btn:hover{transform:translateY(-1px)}
     .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
     .btn.ghost{background:transparent}
@@ -40,52 +41,53 @@
 
     /* HERO */
     .hero{padding:22px 0 8px}
-    .hero-inner{display:grid;gap:12px;justify-items:center;text-align:center}
-    .hero-logo{width:min(380px, 64vw);height:auto;display:block;filter:drop-shadow(0 10px 26px rgba(10,30,80,.08))}
+    .hero-inner{display:grid;gap:8px;justify-items:center;text-align:center}
+    .hero-logo{width:min(360px, 64vw);height:auto;display:block}
     .headline{font-size:clamp(20px,3.2vw,26px);margin:4px 0 0}
     .sub{color:var(--muted);max-width:68ch;margin:0 auto}
 
-    .section{padding:26px 0}
-    .section h2{font-size:26px;margin:0 0 8px}
+    .section{padding:24px 0}
+    .section h2{font-size:22px;margin:0 0 8px}
     .muted{color:var(--muted)}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
 
-    /* Grids */
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    /* Layouts */
+    .twocol{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:start}
+    @media (max-width:880px){ .twocol{grid-template-columns:1fr} }
+
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     @media (max-width:980px){ .grid4{grid-template-columns:repeat(3,1fr)} }
     @media (max-width:720px){ .grid3{grid-template-columns:1fr} .grid4{grid-template-columns:1fr 1fr} }
 
-    /* Dos columnas */
-    .twocol{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center}
-    @media (max-width:880px){ .twocol{grid-template-columns:1fr} }
-
-    /* Imagen HOME: más chica y completa */
-    .home-box{display:flex;justify-content:center}
-    .home-img{
-      width:min(420px, 40vw);          /* controla ancho máximo */
-      max-height:520px;                /* altura aprox de 2 filas de funciones */
-      height:auto;
-      object-fit:contain;              /* muestra la pantalla completa */
-      border:1px solid var(--line);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      background:var(--bg);
+    /* Imagenes (más chicas y consistentes) */
+    .img-wrap{display:flex;justify-content:center}
+    .img-s{
+      width:100%; max-width:320px;       /* tope de ancho */
+      height:auto; max-height:260px;     /* tope de alto */
+      object-fit:contain; background:var(--bg);
+      border:1px solid var(--line); border-radius:12px;
     }
-    @media (max-width:880px){ .home-img{ width:min(360px, 70vw); max-height:440px } }
+    /* Capturas de módulo aún más chicas */
+    .mod-img{ width:100%; max-width:260px; height:auto; max-height:160px; object-fit:contain; background:var(--bg); border:1px solid var(--line); border-radius:10px; margin:0 auto; display:block }
+    @media (max-width:980px){ .mod-img{ max-width:240px; max-height:150px } }
+    @media (max-width:720px){ .mod-img{ max-width:220px; max-height:140px } }
 
-    .list{display:grid;gap:8px}
+    /* Home reducido y alineado con funciones */
+    .home-img{ width:100%; max-width:320px; height:auto; max-height:520px; object-fit:contain; border:1px solid var(--line); border-radius:12px; background:var(--bg) }
+
+    .list{display:grid;gap:6px}
     .list li{margin-left:18px}
 
-    .faq{display:grid;gap:12px}
+    .faq{display:grid;gap:10px}
     details{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card)}
     summary{cursor:pointer;font-weight:600}
 
-    .price{font-size:32px;font-weight:800;letter-spacing:.2px}
-    .pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:13px;color:var(--muted)}
+    .price{font-size:28px;font-weight:800;letter-spacing:.2px}
+    .pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
     .cta-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
-    footer{border-top:1px solid var(--line);padding:20px 0;margin-top:20px}
+    footer{border-top:1px solid var(--line);padding:20px 0;margin-top:16px}
     .copy{color:var(--muted);font-size:13px}
   </style>
   <script>
@@ -132,13 +134,13 @@
     </div>
   </section>
 
-  <!-- Funciones (Home a la derecha, chico y completo) -->
+  <!-- Funciones + Home (alineado y reducido) -->
   <section id="funciones" class="section">
     <div class="container twocol">
       <div>
         <h2>Funciones principales</h2>
         <p class="muted">Todo lo que necesitás para operar tu comercio, en una sola app.</p>
-        <div class="grid3" style="margin-top:10px">
+        <div class="grid3" style="margin-top:8px">
           <div class="card"><h3>Catálogo de productos</h3><p class="muted">Stock, variantes, marcas y precios con actualizaciones rápidas.</p></div>
           <div class="card"><h3>Compras con OCR</h3><p class="muted">Lee e interpreta facturas para acelerar la carga.</p></div>
           <div class="card"><h3>Ventas con ticket</h3><p class="muted">Impresoras térmicas Bluetooth (58 mm) y medios de pago.</p></div>
@@ -147,7 +149,7 @@
           <div class="card"><h3>Analíticas</h3><p class="muted">Resultados, rentabilidad y valorización de stock.</p></div>
         </div>
       </div>
-      <div class="home-box">
+      <div class="img-wrap">
         <img class="home-img" src="/assets/screens/home.webp" alt="Home de ACIA" loading="lazy" decoding="async" />
       </div>
     </div>
@@ -190,7 +192,7 @@
     </div>
   </section>
 
-  <!-- Alta por IA -->
+  <!-- Alta por IA (imagen chica y alineada) -->
   <section id="alta-ia" class="section">
     <div class="container twocol">
       <div>
@@ -204,8 +206,8 @@
           <li><b>Aprende con tu uso:</b> mejora con tu historial de cargas.</li>
         </ul>
       </div>
-      <div class="card">
-        <img class="mod-img" src="/assets/screens/alta-ia.png" alt="Alta por IA" loading="lazy" decoding="async" />
+      <div class="img-wrap">
+        <img class="img-s" src="/assets/screens/alta-ia.png" alt="Alta por IA" loading="lazy" decoding="async" />
       </div>
     </div>
   </section>
@@ -224,8 +226,8 @@
             <li><b>Impresión inalámbrica:</b> tickets y etiquetas por Bluetooth.</li>
           </ul>
         </div>
-        <div class="card">
-          <img class="mod-img" src="/assets/acia-ventas.png" alt="ACIA Ventas" loading="lazy" decoding="async" />
+        <div class="img-wrap">
+          <img class="img-s" src="/assets/screens/acia-ventas.png" alt="ACIA Ventas" loading="lazy" decoding="async" />
         </div>
       </div>
     </div>
@@ -301,17 +303,17 @@
     </div>
   </section>
 
-  <!-- Precio (solo suscripción) -->
+  <!-- Precio -->
   <section id="precio" class="section">
     <div class="container twocol">
       <div>
         <h2>Plan simple y transparente</h2>
         <p class="muted">Todo ACIA por un precio claro, sin letra chica.</p>
-        <div class="card" style="margin-top:8px">
+        <div class="card" style="margin-top:6px">
           <p class="pill">Suscripción mensual</p>
           <p class="price">$19.000</p>
           <p class="muted">Incluye hosting, soporte y actualizaciones.</p>
-          <div class="cta-row" style="margin-top:8px">
+          <div class="cta-row" style="margin-top:6px">
             <a class="btn primary" href="https://wa.me/5491168291409" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">Consultar por WhatsApp</a>
             <a class="btn ghost" href="mailto:soporte@acia.com.ar">Escribir por email</a>
           </div>
@@ -333,12 +335,12 @@
   <section id="faq" class="section">
     <div class="container">
       <h2>Preguntas frecuentes</h2>
-    <div class="faq">
-      <details><summary>¿La app funciona sin internet?</summary><p class="muted">Sí. Podés operar ventas y stock en local. Al reconectarte, se sincroniza con la nube.</p></details>
-      <details><summary>¿Cómo se imprime el ticket?</summary><p class="muted">Con impresoras térmicas Bluetooth compatibles (58 mm).</p></details>
-      <details><summary>¿Puedo migrar mis productos actuales?</summary><p class="muted">Sí, podés importarlos y usar el módulo de IA para completar datos.</p></details>
-      <details><summary>¿Qué necesito para empezar?</summary><p class="muted">Un Android y coordinar el alta. La suscripción es mensual.</p></details>
-    </div>
+      <div class="faq">
+        <details><summary>¿La app funciona sin internet?</summary><p class="muted">Sí. Podés operar ventas y stock en local. Al reconectarte, se sincroniza con la nube.</p></details>
+        <details><summary>¿Cómo se imprime el ticket?</summary><p class="muted">Con impresoras térmicas Bluetooth compatibles (58 mm).</p></details>
+        <details><summary>¿Puedo migrar mis productos actuales?</summary><p class="muted">Sí, podés importarlos y usar el módulo de IA para completar datos.</p></details>
+        <details><summary>¿Qué necesito para empezar?</summary><p class="muted">Un Android y coordinar el alta. La suscripción es mensual.</p></details>
+      </div>
     </div>
   </section>
 </main>
@@ -346,7 +348,7 @@
 <footer>
   <div class="container" style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between">
     <div style="display:flex;gap:10px;align-items:center">
-      <!-- Logo con proporciones reales: solo fijo height -->
+      <!-- Logo con proporciones reales -->
       <img src="/assets/Logo-sin-bajada-color.png" alt="ACIA" height="28" />
       <span class="copy">© 2025 ACIA – Administración Comercial por IA</span>
     </div>
