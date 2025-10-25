@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <title>ACIA – Administración Comercial por Inteligencia Artificial</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Gestión y ventas con IA para comercios: stock, compras con OCR, ventas con ticket Bluetooth, cuenta corriente, ofertas y analíticas. Multiusuario y multidispositivo con ACIA Ventas." />
+  <meta name="description" content="Gestión y ventas con IA para comercios: stock, compras con OCR, ventas con ticket Bluetooth, cuenta corriente, ofertas y analíticas. Multiusuario y multidispositivo con ACIA Ventas. Incluye 7 días de prueba sin costo." />
   <link rel="icon" href="/assets/acia_icon.png" />
   <meta property="og:title" content="ACIA – Administración Comercial por IA" />
-  <meta property="og:description" content="Productos, ventas, compras con OCR, cuenta corriente y analíticas. Multiusuario y multidispositivo con ACIA Ventas." />
+  <meta property="og:description" content="Productos, ventas, compras con OCR, cuenta corriente y analíticas. Multiusuario y multidispositivo con ACIA Ventas. 7 días de prueba sin costo." />
   <meta property="og:url" content="https://acia.com.ar" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://acia.com.ar/assets/acia_icon.png" />
@@ -63,8 +63,7 @@
     /* Imágenes chicas y consistentes */
     .img-wrap{display:flex;justify-content:center}
     .img-s{
-      width:100%; max-width:320px;       /* tope de ancho */
-      height:auto; max-height:260px;     /* tope de alto */
+      width:100%; max-width:320px; height:auto; max-height:260px;
       object-fit:contain; background:var(--bg);
       border:1px solid var(--line); border-radius:12px;
     }
@@ -92,6 +91,7 @@
 
     .price{font-size:28px;font-weight:800;letter-spacing:.2px}
     .pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
+    .pill.success{background:var(--accent-2); border-color:var(--accent-2); color:#fff}
 
     /* Drawer móvil */
     .hamburger{display:none; align-items:center; justify-content:center; width:44px; height:44px;
@@ -176,6 +176,7 @@
       <h1 class="headline">La forma más simple e inteligente de gestionar tu comercio</h1>
       <p class="sub">Arrancás rápido: podés empezar vacío y cargar productos al vender o recibir. Todo sincronizado en la nube.</p>
       <div class="pill">Soporte humano y mejoras continuas</div>
+      <div class="pill success" aria-label="Período de prueba">🎉 7 días de prueba sin costo</div>
 
       <!-- CTA de descarga directo en el héroe -->
       <div class="cta-row">
@@ -185,7 +186,6 @@
         <a class="btn success" href="https://github.com/damianrisatti-blip/acia-auth-bridge/releases/latest/download/acia-ventas.apk" download>
         ⬇️ Descargar ACIA Ventas
         </a>
-
       </div>
     </div>
   </section>
@@ -388,6 +388,7 @@
           <p class="pill">Suscripción mensual</p>
           <p class="price">$19.000</p>
           <p class="muted">Incluye hosting, soporte y actualizaciones.</p>
+          <p class="muted"><b>Incluye 7 días de prueba sin costo.</b> Podés cancelar cuando quieras.</p>
           <div class="cta-row" style="margin-top:6px">
             <a class="btn primary" href="https://wa.me/5491168291409" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">Consultar por WhatsApp</a>
             <a class="btn ghost email-link"
@@ -420,6 +421,7 @@
         <details><summary>¿Cómo se imprime el ticket?</summary><p class="muted">Con impresoras térmicas Bluetooth compatibles (58 mm).</p></details>
         <details><summary>¿Puedo migrar mis productos actuales?</summary><p class="muted">Sí, podés importarlos y usar el módulo de IA para completar datos.</p></details>
         <details><summary>¿Qué necesito para empezar?</summary><p class="muted">Un Android y coordinar el alta. La suscripción es mensual.</p></details>
+        <details><summary>¿Tienen período de prueba?</summary><p class="muted">Sí, <b>7 días de prueba sin costo</b>. Durante ese tiempo podés usar todas las funciones para evaluar si se adapta a tu negocio.</p></details>
       </div>
     </div>
   </section>
@@ -509,7 +511,6 @@
     });
   })();
 </script>
-
 
 </body>
 </html>
