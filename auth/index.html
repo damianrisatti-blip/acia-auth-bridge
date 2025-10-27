@@ -46,7 +46,6 @@
     <h1>ACIA · Confirmación / Recuperación</h1>
     <p id="phase">Cargando página…</p>
     <div id="status" class="status">Esperá un momento…</div>
-    <div class="muted">URL: <code id="u"></code></div>
 
     <form id="pwdForm" class="row" style="display:none">
       <label>Nueva contraseña</label>
@@ -78,7 +77,6 @@
     const $pwd2   = document.getElementById('pwd2');
     const $btnSet = document.getElementById('btnSet');
     const $done   = document.getElementById('done');
-    const $u      = document.getElementById('u');
 
     function setStatus(msg, isErr=false) {
       $status.textContent = msg;
@@ -151,9 +149,6 @@
 
     async function main() {
       try {
-        // Mostrar URL actual para debug
-        $u.textContent = location.href;
-
         if (!window.__SUPA_OK__ || !window.supabase) {
           $phase.textContent = 'Error cargando librería';
           setStatus('No se pudo cargar @supabase/supabase-js desde CDN.', true);
