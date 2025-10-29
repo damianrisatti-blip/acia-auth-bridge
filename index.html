@@ -110,7 +110,38 @@
     .drawer-open .drawer-backdrop{opacity:1; pointer-events:auto}
     .no-scroll{overflow:hidden}
     @media (max-width:880px){ .navlinks{display:none} .hamburger{display:inline-flex} }
+
+    /* Video responsivo 16:9 */
+    .video {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+    }
+    .video iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
   </style>
+
+  <!-- Datos estructurados del video (SEO) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"VideoObject",
+    "name":"ACIA – Instalación y primeros pasos (Android)",
+    "description":"Cómo descargar, instalar y dar los primeros pasos en ACIA.",
+    "thumbnailUrl":"https://acia.com.ar/assets/acia_icon.png",
+    "uploadDate":"2025-10-29",
+    "embedUrl":"https://www.youtube-nocookie.com/embed/h9Y1P6AGTfc",
+    "contentUrl":"https://youtu.be/h9Y1P6AGTfc"
+  }
+  </script>
 </head>
 <body>
 
@@ -329,8 +360,21 @@
         <div class="card">
           <h3>Instalación y primeros pasos</h3>
           <p class="muted">Configuración inicial y recorrido por el Home.</p>
-          <p><a class="btn ghost" href="https://www.youtube.com/" target="_blank" rel="noopener">Ver video</a></p>
+          <!-- Embed YouTube -->
+          <div class="video" style="margin-top:8px">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/h9Y1P6AGTfc?rel=0&modestbranding=1"
+              title="ACIA – Instalación y primeros pasos"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <!-- Link de respaldo -->
+          <p style="margin-top:8px">
+            <a class="btn ghost" href="https://youtu.be/h9Y1P6AGTfc" target="_blank" rel="noopener">Abrir en YouTube</a>
+          </p>
         </div>
+
         <div class="card">
           <h3>Alta por IA</h3>
           <p class="muted">Cómo cargar productos desde fotos y OCR.</p>
@@ -486,13 +530,11 @@
       var fallback = anchor.getAttribute('data-fallback');
       var start = Date.now();
 
-      // Caso PWA/iOS: forzar navegación directa (evita bloqueos)
       if (isStandalone) {
         window.location.href = mailto;
         return;
       }
 
-      // Caso general: intentar mailto; si en Windows no abre nada, ir a Zoho Web
       window.location.href = mailto;
 
       setTimeout(function(){
