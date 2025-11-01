@@ -111,37 +111,27 @@
     .no-scroll{overflow:hidden}
     @media (max-width:880px){ .navlinks{display:none} .hamburger{display:inline-flex} }
 
-    /* Video responsivo 16:9 */
-    .video {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #000;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--line);
+    /* Miniaturas de video (uniformes, 16:9, 320px máx) */
+    .yt-lite{
+      position:relative; width:100%; max-width:320px; aspect-ratio:16/9;
+      margin:8px auto 0; border-radius:12px; overflow:hidden; background:#000;
+      background-size:cover; background-position:center; box-shadow:var(--shadow);
+      border:1px solid var(--line); cursor:pointer;
     }
-    .video iframe {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      border: 0;
+    .yt-lite::after{
+      content:""; position:absolute; inset:auto auto 12px 12px; width:42px; height:42px;
+      background:rgba(0,0,0,.5);
+      border-radius:50%;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
     }
-    /* Video vertical 9:16 para Shorts */
-    .video-vert {
-      position: relative;
-      width: 100%;
-      padding-top: 177.78%;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #000;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--line);
+    .yt-lite::before{
+      content:""; position:absolute; left:27px; bottom:24px;
+      border-style:solid; border-width:10px 0 10px 16px; border-color:transparent transparent transparent white;
+      z-index:2;
     }
-    .video-vert iframe {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      border: 0;
+    .yt-lite.playing::after, .yt-lite.playing::before{ display:none; }
+    .yt-lite iframe{
+      position:absolute; inset:0; width:100%; height:100%; border:0;
     }
   </style>
 
@@ -373,103 +363,71 @@
     <div class="container">
       <h2>Videos tutoriales</h2>
       <div class="grid3">
-        <!-- 1) Instalación y primeros pasos (16:9) -->
+        <!-- 1) Instalación y primeros pasos -->
         <div class="card">
           <h3>Instalación y primeros pasos</h3>
           <p class="muted">Configuración inicial y recorrido por el Home.</p>
-          <div class="video" style="margin-top:8px">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/h9Y1P6AGTfc?rel=0&modestbranding=1"
-              title="ACIA – Instalación y primeros pasos"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-          </div>
+          <div class="yt-lite" data-ytid="h9Y1P6AGTfc" aria-label="Reproducir video: Instalación y primeros pasos"></div>
           <p style="margin-top:8px">
             <a class="btn ghost" href="https://youtu.be/h9Y1P6AGTfc" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
         </div>
 
-        <!-- 2) Alta manual (Short vertical) -->
+        <!-- 2) Alta por IA (nuevo, luego de primeros pasos) -->
+        <div class="card">
+          <h3>Alta por IA</h3>
+          <p class="muted">Foto + OCR + clasificación automática.</p>
+          <div class="yt-lite" data-ytid="wbLhqYGO9oE" aria-label="Reproducir video: Alta por IA"></div>
+          <p style="margin-top:8px">
+            <a class="btn ghost" href="https://youtube.com/shorts/wbLhqYGO9oE" target="_blank" rel="noopener">Abrir en YouTube</a>
+          </p>
+        </div>
+
+        <!-- 3) Alta manual -->
         <div class="card">
           <h3>Alta manual</h3>
           <p class="muted">Carga rápida sin OCR.</p>
-          <div class="video-vert" style="margin-top:8px">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/eJvAWUVdpQc?rel=0&modestbranding=1"
-              title="ACIA – Alta manual"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-          </div>
+          <div class="yt-lite" data-ytid="eJvAWUVdpQc" aria-label="Reproducir video: Alta manual"></div>
           <p style="margin-top:8px">
             <a class="btn ghost" href="https://youtube.com/shorts/eJvAWUVdpQc" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
         </div>
 
-        <!-- 3) Compra Manual (Short vertical) -->
+        <!-- 4) Compra manual -->
         <div class="card">
           <h3>Compra manual</h3>
           <p class="muted">Ingreso de compra y actualización de costos.</p>
-          <div class="video-vert" style="margin-top:8px">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/c7xr8NUBWlI?rel=0&modestbranding=1"
-              title="ACIA – Compra manual"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-          </div>
+          <div class="yt-lite" data-ytid="c7xr8NUBWlI" aria-label="Reproducir video: Compra manual"></div>
           <p style="margin-top:8px">
             <a class="btn ghost" href="https://youtube.com/shorts/c7xr8NUBWlI" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
         </div>
 
-        <!-- 4) Conectar impresora (Short vertical) -->
+        <!-- 5) Conectar impresora -->
         <div class="card">
           <h3>Conectar impresora</h3>
           <p class="muted">Configurar Bluetooth 58 mm.</p>
-          <div class="video-vert" style="margin-top:8px">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/vAnEKFYixUc?rel=0&modestbranding=1"
-              title="ACIA – Conectar impresora"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-          </div>
+          <div class="yt-lite" data-ytid="vAnEKFYixUc" aria-label="Reproducir video: Conectar impresora"></div>
           <p style="margin-top:8px">
             <a class="btn ghost" href="https://youtube.com/shorts/vAnEKFYixUc" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
         </div>
 
-        <!-- 5) Nueva Venta (Short vertical) -->
+        <!-- 6) Nueva venta -->
         <div class="card">
           <h3>Nueva venta</h3>
           <p class="muted">Alta del ticket y cobro.</p>
-          <div class="video-vert" style="margin-top:8px">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/8DxEKSl0REw?rel=0&modestbranding=1"
-              title="ACIA – Nueva venta"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-          </div>
+          <div class="yt-lite" data-ytid="8DxEKSl0REw" aria-label="Reproducir video: Nueva venta"></div>
           <p style="margin-top:8px">
             <a class="btn ghost" href="https://youtube.com/shorts/8DxEKSl0REw" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
         </div>
 
-        <!-- 6) Ofertas (Short vertical) -->
+        <!-- 7) Ofertas -->
         <div class="card">
           <h3>Ofertas</h3>
           <p class="muted">Precio fijo, %, 2×1, 3×2…</p>
-          <div class="video-vert" style="margin-top:8px">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/quCU7SQefWo?rel=0&modestbranding=1"
-              title="ACIA – Ofertas"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-          </div>
+          <div class="yt-lite" data-ytid="quCU7SQefWo" aria-label="Reproducir video: Ofertas"></div>
           <p style="margin-top:8px">
             <a class="btn ghost" href="https://youtube.com/shorts/quCU7SQefWo" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
@@ -605,6 +563,24 @@
     backdrop?.addEventListener('click', closeDrawer);
     links.forEach(a => a.addEventListener('click', closeDrawer));
     window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
+
+    // Carga ligera de YouTube: miniatura uniforme y embebe al hacer clic
+    document.querySelectorAll('.yt-lite').forEach(function(el){
+      var id = el.getAttribute('data-ytid');
+      if (!id) return;
+      el.style.backgroundImage = 'url(https://i.ytimg.com/vi/' + id + '/hqdefault.jpg)';
+      el.addEventListener('click', function(){
+        if (el.classList.contains('playing')) return;
+        el.classList.add('playing');
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('src', 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1');
+        iframe.setAttribute('title', 'YouTube video');
+        iframe.setAttribute('loading', 'eager');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share');
+        iframe.setAttribute('allowfullscreen', '');
+        el.appendChild(iframe);
+      }, { once: true });
+    });
   });
 </script>
 <script>
