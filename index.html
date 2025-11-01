@@ -127,9 +127,25 @@
       width: 100%; height: 100%;
       border: 0;
     }
+    /* Video vertical 9:16 para Shorts */
+    .video-vert {
+      position: relative;
+      width: 100%;
+      padding-top: 177.78%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+    }
+    .video-vert iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
   </style>
 
-  <!-- Datos estructurados del video (SEO) -->
+  <!-- Datos estructurados del video principal (SEO) -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -140,19 +156,6 @@
     "uploadDate":"2025-10-29",
     "embedUrl":"https://www.youtube-nocookie.com/embed/h9Y1P6AGTfc",
     "contentUrl":"https://youtu.be/h9Y1P6AGTfc"
-  }
-  </script>
-  <!-- Nuevo: Datos estructurados para Alta por IA -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"VideoObject",
-    "name":"ACIA – Alta por IA (foto + OCR)",
-    "description":"Cómo cargar productos con fotos, OCR y reconocimiento inteligente en ACIA.",
-    "thumbnailUrl":"https://acia.com.ar/assets/acia_icon.png",
-    "uploadDate":"2025-10-31",
-    "embedUrl":"https://www.youtube-nocookie.com/embed/wbLhqYGO9oE",
-    "contentUrl":"https://youtube.com/shorts/wbLhqYGO9oE?feature=share"
   }
   </script>
 </head>
@@ -370,10 +373,10 @@
     <div class="container">
       <h2>Videos tutoriales</h2>
       <div class="grid3">
+        <!-- 1) Instalación y primeros pasos (16:9) -->
         <div class="card">
           <h3>Instalación y primeros pasos</h3>
           <p class="muted">Configuración inicial y recorrido por el Home.</p>
-          <!-- Embed YouTube -->
           <div class="video" style="margin-top:8px">
             <iframe
               src="https://www.youtube-nocookie.com/embed/h9Y1P6AGTfc?rel=0&modestbranding=1"
@@ -382,34 +385,94 @@
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               allowfullscreen></iframe>
           </div>
-          <!-- Link de respaldo -->
           <p style="margin-top:8px">
             <a class="btn ghost" href="https://youtu.be/h9Y1P6AGTfc" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
         </div>
 
+        <!-- 2) Alta manual (Short vertical) -->
         <div class="card">
-          <h3>Alta por IA</h3>
-          <p class="muted">Cómo cargar productos desde fotos y OCR.</p>
-          <!-- Nuevo embed YouTube Shorts -->
-          <div class="video" style="margin-top:8px">
+          <h3>Alta manual</h3>
+          <p class="muted">Carga rápida sin OCR.</p>
+          <div class="video-vert" style="margin-top:8px">
             <iframe
-              src="https://www.youtube-nocookie.com/embed/wbLhqYGO9oE?rel=0&modestbranding=1"
-              title="ACIA – Alta por IA (foto + OCR)"
+              src="https://www.youtube-nocookie.com/embed/eJvAWUVdpQc?rel=0&modestbranding=1"
+              title="ACIA – Alta manual"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               allowfullscreen></iframe>
           </div>
-          <!-- Link de respaldo -->
           <p style="margin-top:8px">
-            <a class="btn ghost" href="https://youtube.com/shorts/wbLhqYGO9oE?feature=share" target="_blank" rel="noopener">Abrir en YouTube</a>
+            <a class="btn ghost" href="https://youtube.com/shorts/eJvAWUVdpQc" target="_blank" rel="noopener">Abrir en YouTube</a>
           </p>
         </div>
 
+        <!-- 3) Compra Manual (Short vertical) -->
         <div class="card">
-          <h3>ACIA Ventas</h3>
-          <p class="muted">Vender desde otros dispositivos y sincronizar.</p>
-          <p><a class="btn ghost" href="https://www.youtube.com/" target="_blank" rel="noopener">Ver video</a></p>
+          <h3>Compra manual</h3>
+          <p class="muted">Ingreso de compra y actualización de costos.</p>
+          <div class="video-vert" style="margin-top:8px">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/c7xr8NUBWlI?rel=0&modestbranding=1"
+              title="ACIA – Compra manual"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <p style="margin-top:8px">
+            <a class="btn ghost" href="https://youtube.com/shorts/c7xr8NUBWlI" target="_blank" rel="noopener">Abrir en YouTube</a>
+          </p>
+        </div>
+
+        <!-- 4) Conectar impresora (Short vertical) -->
+        <div class="card">
+          <h3>Conectar impresora</h3>
+          <p class="muted">Configurar Bluetooth 58 mm.</p>
+          <div class="video-vert" style="margin-top:8px">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/vAnEKFYixUc?rel=0&modestbranding=1"
+              title="ACIA – Conectar impresora"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <p style="margin-top:8px">
+            <a class="btn ghost" href="https://youtube.com/shorts/vAnEKFYixUc" target="_blank" rel="noopener">Abrir en YouTube</a>
+          </p>
+        </div>
+
+        <!-- 5) Nueva Venta (Short vertical) -->
+        <div class="card">
+          <h3>Nueva venta</h3>
+          <p class="muted">Alta del ticket y cobro.</p>
+          <div class="video-vert" style="margin-top:8px">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/8DxEKSl0REw?rel=0&modestbranding=1"
+              title="ACIA – Nueva venta"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <p style="margin-top:8px">
+            <a class="btn ghost" href="https://youtube.com/shorts/8DxEKSl0REw" target="_blank" rel="noopener">Abrir en YouTube</a>
+          </p>
+        </div>
+
+        <!-- 6) Ofertas (Short vertical) -->
+        <div class="card">
+          <h3>Ofertas</h3>
+          <p class="muted">Precio fijo, %, 2×1, 3×2…</p>
+          <div class="video-vert" style="margin-top:8px">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/quCU7SQefWo?rel=0&modestbranding=1"
+              title="ACIA – Ofertas"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <p style="margin-top:8px">
+            <a class="btn ghost" href="https://youtube.com/shorts/quCU7SQefWo" target="_blank" rel="noopener">Abrir en YouTube</a>
+          </p>
         </div>
       </div>
     </div>
@@ -554,13 +617,11 @@
     function openEmail(anchor){
       var mailto = anchor.getAttribute('href');
       var fallback = anchor.getAttribute('data-fallback');
-      var start = Date.now();
 
       if (isStandalone) {
         window.location.href = mailto;
         return;
       }
-
       window.location.href = mailto;
 
       setTimeout(function(){
