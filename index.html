@@ -93,6 +93,10 @@
     .pill{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
     .pill.success{background:var(--accent-2); border-color:var(--accent-2); color:#fff}
 
+    /* Avisos/llamados */
+    .note{background:color-mix(in srgb, var(--accent) 6%, var(--card)); border:1px dashed color-mix(in srgb, var(--accent) 30%, var(--line)); padding:12px; border-radius:12px}
+    .note strong{color:var(--fg)}
+
     /* Drawer móvil */
     .hamburger{display:none; align-items:center; justify-content:center; width:44px; height:44px;
       border:1px solid var(--line); border-radius:10px; background:var(--card)}
@@ -223,6 +227,10 @@
         <a class="btn success" href="https://github.com/damianrisatti-blip/acia-auth-bridge/releases/latest/download/acia-ventas.apk" download>
         ⬇️ Descargar ACIA Ventas
         </a>
+        <!-- NUEVO: mención Windows sin descarga -->
+        <a class="btn ghost" href="https://wa.me/5491168291409?text=Hola%20ACIA,%20quiero%20info%20de%20la%20versi%C3%B3n%20para%20Windows" target="_blank" rel="noopener" aria-label="Consultar acceso Windows">
+          🖥️ ACIA para Windows (consultar acceso)
+        </a>
       </div>
     </div>
   </section>
@@ -341,6 +349,19 @@
           </a>
         </div>
         <p class="muted" style="margin-top:8px">ACIA Ventas <b>requiere</b> que ACIA (principal) esté instalada.</p>
+
+        <!-- NUEVO: aviso Windows sin descarga -->
+        <div class="note" style="margin-top:12px">
+          <strong>🖥️ ¿Usás PC?</strong> También contamos con <b>versión para Windows</b>.<br/>
+          Por ahora se entrega <b>a pedido</b>. Si te interesa, escribinos:
+          <div class="cta-row" style="margin-top:8px">
+            <a class="btn ghost" href="https://wa.me/5491168291409?text=Hola%20ACIA,%20quiero%20info%20de%20la%20versi%C3%B3n%20para%20Windows" target="_blank" rel="noopener">Consultar acceso (Windows)</a>
+            <a class="btn ghost email-link"
+              href="mailto:soporte@acia.com.ar?subject=Consulta%20ACIA%20Windows"
+              data-fallback="https://mail.zoho.com/zm/#compose?to=soporte@acia.com.ar&subject=Consulta%20ACIA%20Windows"
+              rel="noopener">Escribir por email</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -523,6 +544,10 @@
         <details><summary>¿Puedo migrar mis productos actuales?</summary><p class="muted">Sí, podés importarlos y usar el módulo de IA para completar datos.</p></details>
         <details><summary>¿Qué necesito para empezar?</summary><p class="muted">Un Android y coordinar el alta. La suscripción es mensual.</p></details>
         <details><summary>¿Tienen período de prueba?</summary><p class="muted">Sí, <b>7 días de prueba sin costo</b>. Durante ese tiempo podés usar todas las funciones para evaluar si se adapta a tu negocio.</p></details>
+        <!-- NUEVO: FAQ Windows -->
+        <details><summary>¿Hay versión para PC/Windows?</summary>
+          <p class="muted">Sí, contamos con <b>versión para Windows</b> disponible a pedido. No publicamos enlace de descarga directo. Si te interesa, <a href="https://wa.me/5491168291409?text=Hola%20ACIA,%20quiero%20info%20de%20la%20versi%C3%B3n%20para%20Windows" target="_blank" rel="noopener">escribinos por WhatsApp</a> o <a class="email-link" href="mailto:soporte@acia.com.ar?subject=Consulta%20ACIA%20Windows" data-fallback="https://mail.zoho.com/zm/#compose?to=soporte@acia.com.ar&subject=Consulta%20ACIA%20Windows" rel="noopener">por email</a>.</p>
+        </details>
       </div>
     </div>
   </section>
