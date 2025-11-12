@@ -24,27 +24,12 @@
     a { color: #7fb4ff; text-decoration: underline; }
     .muted { opacity:.8; font-size:.85rem }
   </style>
-
-  <script>
-    window.onerror = function (msg, src, line, col, err) {
-      const el = document.getElementById('status');
-      if (el) {
-        el.textContent = 'JS error: ' + (err?.stack || msg);
-        el.className = 'status err';
-        const ph = document.getElementById('phase');
-        if (ph) ph.textContent = 'Error de script';
-      }
-    };
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-          defer onload="window.__SUPA_OK__=true"
-          onerror="window.__SUPA_OK__=false"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
   <div class="card">
     <h1>ACIA · Confirmación / Recuperación</h1>
-    <p id="phase">Cargando página…</p>
+    <p id="phase">Cargando…</p>
     <div id="status" class="status">Esperá un momento…</div>
 
     <form id="pwdForm" class="row" style="display:none">
@@ -55,21 +40,19 @@
       <button id="btnSet" type="submit">Guardar contraseña</button>
     </form>
 
-    <!-- Cambiado: sin botón, solo mensaje final -->
     <div id="done" class="row" style="display:none">
-      <div class="status ok">¡Listo! Tu contraseña fue actualizada.</div>
-      <p>Listo. Cerrá esta pantalla y volvé a <b>ACIA</b>.</p>
+      <div class="status ok">¡Listo!</div>
+      <p>Cerrá esta pantalla y volvé a <b>ACIA</b>.</p>
     </div>
 
-    <div class="footer">Si tenés problemas, reintentá desde el enlace del mail en este mismo dispositivo.</div>
+    <div class="footer">Si tenés problemas, abrí el enlace del mail en este mismo dispositivo.</div>
   </div>
 
-  <script>
-    // === Config ===
+  <script type="module">
+    // === TU PROYECTO ===
     const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M";
 
-    // === UI refs ===
     const $status = document.getElementById('status');
     const $phase  = document.getElementById('phase');
     const $form   = document.getElementById('pwdForm');
@@ -78,110 +61,48 @@
     const $btnSet = document.getElementById('btnSet');
     const $done   = document.getElementById('done');
 
-    function setStatus(msg, isErr=false) {
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const setStatus = (msg, err=false) => {
       $status.textContent = msg;
-      $status.className = 'status' + (isErr ? ' err' : '');
-    }
-    function parseHashParams() {
+      $status.className = 'status' + (err ? ' err' : '');
+    };
+
+    const hashParams = () => {
       const h = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-      const u = new URLSearchParams(h);
-      return Object.fromEntries(u.entries());
-    }
+      return Object.fromEntries(new URLSearchParams(h).entries());
+    };
 
-    // Intenta todas las variantes conocidas de enlace
-    async function tryAllExchanges(supabase) {
-      const url        = new URL(location.href);
-      const code       = url.searchParams.get('code');        // a veces OTP camuflado
-      const token_hash = url.searchParams.get('token_hash');  // OTP clásico
-      const token      = url.searchParams.get('token');       // OTP en 'token' (nuestro caso)
-      const typeParam  = url.searchParams.get('type');        // recovery|signup|magiclink|invite|email_change
-      const emailParam = url.searchParams.get('email');
-      const types      = ['recovery','signup','magiclink','invite','email_change'];
-
-      // 1) OTP con token: ?type=...&token=...
-      if (token && typeParam) {
-        const r = await supabase.auth.verifyOtp({ type: typeParam, token, email: emailParam || undefined });
-        if (!r.error) return true;
-        console.warn('verifyOtp(token) failed:', r.error);
-      }
-
-      // 2) OTP clásico con token_hash: ?type=...&token_hash=...
-      if (token_hash && typeParam) {
-        const r = await supabase.auth.verifyOtp({ type: typeParam, token_hash, email: emailParam || undefined });
-        if (!r.error) return true;
-        console.warn('verifyOtp(token_hash) failed:', r.error);
-      }
-
-      // 3) Algunos correos meten el OTP en ?code=
-      if (code) {
-        // 3a) probar como token_hash
-        for (const t of types) {
-          let r = await supabase.auth.verifyOtp({ type: t, token_hash: code, email: emailParam || undefined });
-          if (!r.error) return true;
-        }
-        // 3b) probar como token
-        for (const t of types) {
-          let r = await supabase.auth.verifyOtp({ type: t, token: code, email: emailParam || undefined });
-          if (!r.error) return true;
-        }
-      }
-
-      // 4) Enlaces antiguos con #access_token/#refresh_token
-      const h = parseHashParams();
-      if (h.access_token && h.refresh_token) {
-        const { error } = await supabase.auth.setSession({
-          access_token: h.access_token,
-          refresh_token: h.refresh_token
-        });
-        if (!error) return true;
-        console.warn('setSession error:', error);
-      }
-
-      // 5) (último intento) PKCE con ?code=
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (!error) return true;
-        console.warn('exchangeCodeForSession error:', error);
-      }
-
-      return false;
-    }
-
-    async function main() {
+    async function processLink() {
       try {
-        if (!window.__SUPA_OK__ || !window.supabase) {
-          $phase.textContent = 'Error cargando librería';
-          setStatus('No se pudo cargar @supabase/supabase-js desde CDN.', true);
-          return;
-        }
-
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         $phase.textContent = 'Procesando enlace…';
-        setStatus('Intercambiando token…');
+        setStatus('Validando token…');
 
-        const exchanged = await tryAllExchanges(supabase);
-        const { data: { session } } = await supabase.auth.getSession();
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get('code');
+        const h = hashParams();
 
-        if (!exchanged || !session) {
-          // Mostrar motivo si viene en el hash (cuando un tracker consume el enlace)
-          const h = parseHashParams();
-          if (h.error || h.error_description) {
-            setStatus(`Error: ${h.error} · ${decodeURIComponent(h.error_description || '')}`, true);
-          } else {
-            setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
-          }
-          $phase.textContent = 'Enlace inválido o expirado';
-          return;
+        // 1) Formato moderno (PKCE / OTP): ?code=...
+        if (code) {
+          // 🔧 CORRECCIÓN: pasar LA URL COMPLETA
+          const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+          if (error) throw error;
+        }
+        // 2) Formato hash: #access_token=...&refresh_token=...
+        else if (h.access_token || h.refresh_token || h.type) {
+          // Usa el helper que parsea y guarda sesión
+          const { error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+          if (error) throw error;
+        }
+        else {
+          throw new Error('No se encontraron parámetros de autenticación.');
         }
 
-        // Determinar tipo para decidir si mostrar cambio de contraseña
-        const u = new URL(location.href);
-        const type = u.searchParams.get('type') ||
-                     (location.hash.match(/type=([^&]+)/) || [])[1] ||
-                     'unknown';
+        // Confirmado: decidir si mostrar cambio de contraseña
+        const type = url.searchParams.get('type')
+                   || (location.hash.match(/type=([^&]+)/)?.[1]) || '';
 
-        if (['recovery','signup','invite','magiclink','unknown'].includes(type)) {
+        if (type === 'recovery') {
           $phase.textContent = 'Definir contraseña';
           setStatus('Ingresá tu nueva contraseña y confirmá.');
           $form.style.display = 'grid';
@@ -191,7 +112,6 @@
             const a = $pwd1.value.trim(), b = $pwd2.value.trim();
             if (a.length < 8) return setStatus('La contraseña debe tener al menos 8 caracteres.', true);
             if (a !== b)     return setStatus('Las contraseñas no coinciden.', true);
-
             $btnSet.disabled = true;
             setStatus('Actualizando contraseña…');
 
@@ -201,7 +121,6 @@
               $btnSet.disabled = false;
               return;
             }
-
             $form.style.display = 'none';
             $done.style.display = 'grid';
             $phase.textContent = '¡Contraseña actualizada!';
@@ -209,17 +128,22 @@
           });
         } else {
           $phase.textContent = 'Sesión confirmada';
-          setStatus('Tu sesión fue confirmada correctamente. Listo, cerrá esta pantalla y volvé a ACIA.');
+          setStatus('¡Cuenta verificada correctamente!');
           $done.style.display = 'grid';
         }
-      } catch (err) {
-        console.error(err);
-        $phase.textContent = 'Error';
-        setStatus('Ocurrió un error procesando el enlace: ' + (err?.message || String(err)), true);
+      } catch (e) {
+        console.error(e);
+        $phase.textContent = 'Enlace inválido o expirado';
+        const h = hashParams();
+        if (h.error || h.error_description) {
+          setStatus(`Error: ${h.error} · ${decodeURIComponent(h.error_description || '')}`, true);
+        } else {
+          setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
+        }
       }
     }
 
-    document.addEventListener('DOMContentLoaded', main);
+    document.addEventListener('DOMContentLoaded', processLink);
   </script>
 </body>
 </html>
