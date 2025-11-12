@@ -16,6 +16,10 @@
     .ok { background: #0e3d16; border: 1px solid #1f7a31; }
     .err { background: #3d0e11; border: 1px solid #b93845; }
     .row { display: grid; gap: 10px; margin-top: 14px; }
+    label { font-size:.9rem; color:#b7c7ff; }
+    input { width:100%; padding:12px 14px; border-radius:12px; border:1px solid #284f9a; background:#0b1733; color:#eef3ff; }
+    button { margin-top:10px; padding:12px 14px; border:0; border-radius:12px; background:#1f6fff; color:white; font-weight:600; cursor:pointer; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
@@ -44,6 +48,8 @@
     const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M";
 
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const $status = document.getElementById('status');
     const $phase  = document.getElementById('phase');
     const $form   = document.getElementById('pwdForm');
@@ -52,50 +58,52 @@
     const $btnSet = document.getElementById('btnSet');
     const $done   = document.getElementById('done');
 
-    const setStatus = (msg, err=false) => {
-      $status.textContent = msg;
-      $status.className = 'status' + (err ? ' err' : '');
-    };
-    const hashParams = () => {
+    const setStatus = (msg, err=false) => { $status.textContent = msg; $status.className = 'status' + (err ? ' err' : ''); };
+    const getHashParams = () => {
       const h = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
       return Object.fromEntries(new URLSearchParams(h).entries());
     };
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     async function robustExchange() {
-      const url = new URL(window.location.href);
-      const code = url.searchParams.get('code');
-      const type = url.searchParams.get('type') || (location.hash.match(/type=([^&]+)/)?.[1]) || '';
+      const url   = new URL(window.location.href);
+      const code  = url.searchParams.get('code');          // PKCE
+      const typeQ = url.searchParams.get('type') || (location.hash.match(/type=([^&]+)/)?.[1]) || '';
       const email = url.searchParams.get('email') || '';
-      const h = hashParams();
+      const debug = url.searchParams.get('debug') === '1';
+      const h     = getHashParams();
 
-      // 1) hash-based (old style)
+      // 1) Enlaces antiguos con #access_token/#refresh_token
       if (h.access_token || h.refresh_token || h.type) {
         const { error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-        if (!error) return { ok: true, type: h.type || type || '' };
+        if (!error) return { ok: true, type: h.type || typeQ || '' };
+        if (debug) setStatus('getSessionFromUrl: ' + (error.message || String(error)), true);
       }
 
-      // 2) PKCE / OTP (new style)
+      // 2) PKCE (?code=...)
       if (code) {
-        // 2a) exchangeCodeForSession con URL completa
+        // 2a) ¡Clave! Pasar SOLO el code, no toda la URL.
         {
-          const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-          if (!error) return { ok: true, type: type || 'signup' };
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (!error) return { ok: true, type: typeQ || 'signup' };
+          if (debug) setStatus('exchangeCodeForSession(code): ' + (error.message || String(error)), true);
         }
-        // 2b) fallback: intentar verifyOtp con token y token_hash
-        const tryTypes = ['signup','recovery','magiclink','invite','email_change'];
-        for (const t of tryTypes) {
-          let r = await supabase.auth.verifyOtp({ type: t, token: code, email: email || undefined });
-          if (!r.error) return { ok: true, type: t };
-        }
-        for (const t of tryTypes) {
-          let r = await supabase.auth.verifyOtp({ type: t, token_hash: code, email: email || undefined });
-          if (!r.error) return { ok: true, type: t };
+        // 2b) Fallbacks: verifyOtp con token / token_hash (requiere email)
+        const kinds = ['signup','recovery','magiclink','invite','email_change'];
+        if (email) {
+          for (const k of kinds) {
+            const r = await supabase.auth.verifyOtp({ type: k, token: code, email });
+            if (!r.error) return { ok: true, type: k };
+          }
+          for (const k of kinds) {
+            const r = await supabase.auth.verifyOtp({ type: k, token_hash: code, email });
+            if (!r.error) return { ok: true, type: k };
+          }
+        } else if (debug) {
+          setStatus('Falta email= en la URL para intentar verifyOtp como fallback.', true);
         }
       }
 
-      return { ok: false, type: type || '' };
+      return { ok: false, type: typeQ || '' };
     }
 
     async function main() {
@@ -107,17 +115,21 @@
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!ex.ok || !session) {
-          const h = hashParams();
+          const h = getHashParams();
+          const debug = new URL(window.location.href).searchParams.get('debug') === '1';
           if (h.error || h.error_description) {
             setStatus(`Error: ${h.error} · ${decodeURIComponent(h.error_description || '')}`, true);
           } else {
-            setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
+            setStatus(debug
+              ? 'No se pudo validar. Activá &email= en el enlace o revisá el detalle arriba si aparece.'
+              : 'No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.',
+              true);
           }
           $phase.textContent = 'Enlace inválido o expirado';
           return;
         }
 
-        // Si es recuperación, pedir nueva contraseña; en signup mostramos OK y listo.
+        // Recuperación: pedir nueva contraseña; en signup mostramos OK.
         if (ex.type === 'recovery') {
           $phase.textContent = 'Definir nueva contraseña';
           setStatus('Ingresá tu nueva contraseña y confirmá.');
@@ -150,9 +162,10 @@
           $done.style.display = 'grid';
         }
       } catch (e) {
-        console.error(e);
+        const debug = new URL(window.location.href).searchParams.get('debug') === '1';
         $phase.textContent = 'Error';
-        setStatus('Ocurrió un error procesando el enlace: ' + (e?.message || String(e)), true);
+        setStatus(debug ? ('Detalle: ' + (e?.message || String(e))) :
+                          'Ocurrió un error procesando el enlace.', true);
       }
     }
 
