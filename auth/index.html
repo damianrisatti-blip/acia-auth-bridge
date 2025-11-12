@@ -44,7 +44,7 @@
   </div>
 
   <script type="module">
-    // ➜ VERIFICAR: que estos sean del MISMO proyecto que envía los mails
+    // MISMO proyecto que emite los mails:
     const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M";
 
@@ -66,44 +66,58 @@
 
     async function robustExchange() {
       const url   = new URL(window.location.href);
-      const code  = url.searchParams.get('code');          // PKCE
+      const code  = url.searchParams.get('code');         // PKCE
+      const token = url.searchParams.get('token');        // OTP (nuestro preferido)
+      const token_hash = url.searchParams.get('token_hash'); // OTP hash
       const typeQ = url.searchParams.get('type') || (location.hash.match(/type=([^&]+)/)?.[1]) || '';
       const email = url.searchParams.get('email') || '';
       const debug = url.searchParams.get('debug') === '1';
       const h     = getHashParams();
 
-      // 1) Enlaces antiguos con #access_token/#refresh_token
+      // 0) Old hash-style (magic link con access_token)
       if (h.access_token || h.refresh_token || h.type) {
         const { error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-        if (!error) return { ok: true, type: h.type || typeQ || '' };
+        if (!error) return { ok:true, type:(h.type || typeQ || '') };
         if (debug) setStatus('getSessionFromUrl: ' + (error.message || String(error)), true);
       }
 
-      // 2) PKCE (?code=...)
+      // 1) OTP "clásico": token + type + (email)
+      if (token && typeQ) {
+        const r = await supabase.auth.verifyOtp({ type: typeQ, token, email: email || undefined });
+        if (!r.error) return { ok:true, type:typeQ };
+        if (debug) setStatus('verifyOtp(token): ' + (r.error?.message || r.error || 'error'), true);
+      }
+
+      // 2) OTP con token_hash
+      if (token_hash && typeQ) {
+        const r = await supabase.auth.verifyOtp({ type: typeQ, token_hash, email: email || undefined });
+        if (!r.error) return { ok:true, type:typeQ };
+        if (debug) setStatus('verifyOtp(token_hash): ' + (r.error?.message || r.error || 'error'), true);
+      }
+
+      // 3) PKCE (?code=...) – probamos canje directo
       if (code) {
-        // 2a) ¡Clave! Pasar SOLO el code, no toda la URL.
-        {
-          const { error } = await supabase.auth.exchangeCodeForSession(code);
-          if (!error) return { ok: true, type: typeQ || 'signup' };
-          if (debug) setStatus('exchangeCodeForSession(code): ' + (error.message || String(error)), true);
-        }
-        // 2b) Fallbacks: verifyOtp con token / token_hash (requiere email)
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) return { ok:true, type:typeQ || 'signup' };
+        if (debug) setStatus('exchangeCodeForSession(code): ' + (error.message || String(error)), true);
+
+        // 3b) Fallbacks: intentar VerifyOtp con ese code (requiere email)
         const kinds = ['signup','recovery','magiclink','invite','email_change'];
         if (email) {
           for (const k of kinds) {
-            const r = await supabase.auth.verifyOtp({ type: k, token: code, email });
-            if (!r.error) return { ok: true, type: k };
+            const r = await supabase.auth.verifyOtp({ type:k, token:code, email });
+            if (!r.error) return { ok:true, type:k };
           }
           for (const k of kinds) {
-            const r = await supabase.auth.verifyOtp({ type: k, token_hash: code, email });
-            if (!r.error) return { ok: true, type: k };
+            const r = await supabase.auth.verifyOtp({ type:k, token_hash:code, email });
+            if (!r.error) return { ok:true, type:k };
           }
         } else if (debug) {
-          setStatus('Falta email= en la URL para intentar verifyOtp como fallback.', true);
+          setStatus('Falta email= en la URL para fallback verifyOtp.', true);
         }
       }
 
-      return { ok: false, type: typeQ || '' };
+      return { ok:false, type:typeQ || '' };
     }
 
     async function main() {
@@ -121,7 +135,7 @@
             setStatus(`Error: ${h.error} · ${decodeURIComponent(h.error_description || '')}`, true);
           } else {
             setStatus(debug
-              ? 'No se pudo validar. Activá &email= en el enlace o revisá el detalle arriba si aparece.'
+              ? 'No se pudo validar. Revisá arriba el detalle (modo debug).'
               : 'No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.',
               true);
           }
@@ -129,7 +143,6 @@
           return;
         }
 
-        // Recuperación: pedir nueva contraseña; en signup mostramos OK.
         if (ex.type === 'recovery') {
           $phase.textContent = 'Definir nueva contraseña';
           setStatus('Ingresá tu nueva contraseña y confirmá.');
