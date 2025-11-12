@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>ACIA – Autenticación</title>
+  <title>ACIA – Confirmación / Recuperación</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
   <style>
@@ -13,23 +13,16 @@
     h1 { font-size: 1.25rem; margin: 0 0 12px; }
     p { margin: 10px 0; line-height: 1.5; color: #c8d4ff; }
     .status { padding: 10px 12px; border-radius: 10px; background: #0c244f; border: 1px solid #153a7a; font-size: .95rem; white-space: pre-wrap; }
-    .row { display: grid; gap: 10px; margin-top: 14px; }
-    label { font-size: .9rem; color: #b7c7ff; }
-    input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #284f9a; background: #0b1733; color: #eef3ff; outline: none; }
-    button { margin-top: 10px; padding: 12px 14px; border: 0; border-radius: 12px; background: #1f6fff; color: white; font-weight: 600; cursor: pointer; }
-    button:disabled { opacity: .6; cursor: not-allowed; }
     .ok { background: #0e3d16; border: 1px solid #1f7a31; }
     .err { background: #3d0e11; border: 1px solid #b93845; }
-    .footer { margin-top: 16px; font-size: .9rem; color: #9fb2ff; opacity: .85; }
-    a { color: #7fb4ff; text-decoration: underline; }
-    .muted { opacity:.8; font-size:.85rem }
+    .row { display: grid; gap: 10px; margin-top: 14px; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
   <div class="card">
     <h1>ACIA · Confirmación / Recuperación</h1>
-    <p id="phase">Cargando…</p>
+    <p id="phase">Procesando…</p>
     <div id="status" class="status">Esperá un momento…</div>
 
     <form id="pwdForm" class="row" style="display:none">
@@ -41,15 +34,13 @@
     </form>
 
     <div id="done" class="row" style="display:none">
-      <div class="status ok">¡Listo!</div>
+      <div class="status ok">¡Listo! Operación completada.</div>
       <p>Cerrá esta pantalla y volvé a <b>ACIA</b>.</p>
     </div>
-
-    <div class="footer">Si tenés problemas, abrí el enlace del mail en este mismo dispositivo.</div>
   </div>
 
   <script type="module">
-    // === TU PROYECTO ===
+    // ➜ VERIFICAR: que estos sean del MISMO proyecto que envía los mails
     const SUPABASE_URL = "https://ikkdezixruomnwhgqigy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlra2Rleml4cnVvbW53aGdxaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwODk5MzQsImV4cCI6MjA3MjY2NTkzNH0.r4VOd-Fy_Roq_yk5OhvnK407lktw6pFzagRyACiW0-M";
 
@@ -61,49 +52,74 @@
     const $btnSet = document.getElementById('btnSet');
     const $done   = document.getElementById('done');
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const setStatus = (msg, err=false) => {
       $status.textContent = msg;
       $status.className = 'status' + (err ? ' err' : '');
     };
-
     const hashParams = () => {
       const h = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
       return Object.fromEntries(new URLSearchParams(h).entries());
     };
 
-    async function processLink() {
-      try {
-        $phase.textContent = 'Procesando enlace…';
-        setStatus('Validando token…');
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const url = new URL(window.location.href);
-        const code = url.searchParams.get('code');
-        const h = hashParams();
+    async function robustExchange() {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get('code');
+      const type = url.searchParams.get('type') || (location.hash.match(/type=([^&]+)/)?.[1]) || '';
+      const email = url.searchParams.get('email') || '';
+      const h = hashParams();
 
-        // 1) Formato moderno (PKCE / OTP): ?code=...
-        if (code) {
-          // 🔧 CORRECCIÓN: pasar LA URL COMPLETA
+      // 1) hash-based (old style)
+      if (h.access_token || h.refresh_token || h.type) {
+        const { error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+        if (!error) return { ok: true, type: h.type || type || '' };
+      }
+
+      // 2) PKCE / OTP (new style)
+      if (code) {
+        // 2a) exchangeCodeForSession con URL completa
+        {
           const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-          if (error) throw error;
+          if (!error) return { ok: true, type: type || 'signup' };
         }
-        // 2) Formato hash: #access_token=...&refresh_token=...
-        else if (h.access_token || h.refresh_token || h.type) {
-          // Usa el helper que parsea y guarda sesión
-          const { error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-          if (error) throw error;
+        // 2b) fallback: intentar verifyOtp con token y token_hash
+        const tryTypes = ['signup','recovery','magiclink','invite','email_change'];
+        for (const t of tryTypes) {
+          let r = await supabase.auth.verifyOtp({ type: t, token: code, email: email || undefined });
+          if (!r.error) return { ok: true, type: t };
         }
-        else {
-          throw new Error('No se encontraron parámetros de autenticación.');
+        for (const t of tryTypes) {
+          let r = await supabase.auth.verifyOtp({ type: t, token_hash: code, email: email || undefined });
+          if (!r.error) return { ok: true, type: t };
+        }
+      }
+
+      return { ok: false, type: type || '' };
+    }
+
+    async function main() {
+      try {
+        $phase.textContent = 'Validando enlace…';
+        setStatus('Intercambiando token con el servidor…');
+
+        const ex = await robustExchange();
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!ex.ok || !session) {
+          const h = hashParams();
+          if (h.error || h.error_description) {
+            setStatus(`Error: ${h.error} · ${decodeURIComponent(h.error_description || '')}`, true);
+          } else {
+            setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
+          }
+          $phase.textContent = 'Enlace inválido o expirado';
+          return;
         }
 
-        // Confirmado: decidir si mostrar cambio de contraseña
-        const type = url.searchParams.get('type')
-                   || (location.hash.match(/type=([^&]+)/)?.[1]) || '';
-
-        if (type === 'recovery') {
-          $phase.textContent = 'Definir contraseña';
+        // Si es recuperación, pedir nueva contraseña; en signup mostramos OK y listo.
+        if (ex.type === 'recovery') {
+          $phase.textContent = 'Definir nueva contraseña';
           setStatus('Ingresá tu nueva contraseña y confirmá.');
           $form.style.display = 'grid';
 
@@ -112,6 +128,7 @@
             const a = $pwd1.value.trim(), b = $pwd2.value.trim();
             if (a.length < 8) return setStatus('La contraseña debe tener al menos 8 caracteres.', true);
             if (a !== b)     return setStatus('Las contraseñas no coinciden.', true);
+
             $btnSet.disabled = true;
             setStatus('Actualizando contraseña…');
 
@@ -121,29 +138,25 @@
               $btnSet.disabled = false;
               return;
             }
+
             $form.style.display = 'none';
             $done.style.display = 'grid';
             $phase.textContent = '¡Contraseña actualizada!';
             setStatus('Listo. Cerrá esta pantalla y volvé a ACIA.');
           });
         } else {
-          $phase.textContent = 'Sesión confirmada';
+          $phase.textContent = 'Cuenta verificada';
           setStatus('¡Cuenta verificada correctamente!');
           $done.style.display = 'grid';
         }
       } catch (e) {
         console.error(e);
-        $phase.textContent = 'Enlace inválido o expirado';
-        const h = hashParams();
-        if (h.error || h.error_description) {
-          setStatus(`Error: ${h.error} · ${decodeURIComponent(h.error_description || '')}`, true);
-        } else {
-          setStatus('No pudimos validar el enlace. Abrí el link directamente desde el mail en este dispositivo o pedí uno nuevo.', true);
-        }
+        $phase.textContent = 'Error';
+        setStatus('Ocurrió un error procesando el enlace: ' + (e?.message || String(e)), true);
       }
     }
 
-    document.addEventListener('DOMContentLoaded', processLink);
+    document.addEventListener('DOMContentLoaded', main);
   </script>
 </body>
 </html>
