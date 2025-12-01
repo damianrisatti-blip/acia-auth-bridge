@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eliminar cuenta – ACIA</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+    h1 { color: #0b74de; }
+  </style>
+</head>
+<body>
+  <h1>Solicitud de eliminación de cuenta – ACIA</h1>
+  <p>
+    Si querés eliminar tu cuenta de ACIA y todos los datos asociados, podés solicitarlo enviando un correo a:
+  </p>
+  <p>
+    <strong>soporte@acia.com.ar</strong>
+  </p>
+  <h2>¿Qué datos se eliminan?</h2>
+  <ul>
+    <li>Tu cuenta de usuario (correo electrónico y nombre).</li>
+    <li>Los datos sincronizados asociados a tu cuenta.</li>
+    <li>Historial de inicio de sesión y metadatos vinculados a tu perfil.</li>
+  </ul>
+
+  <h2>¿Qué datos NO se eliminan automáticamente?</h2>
+  <p>
+    Los registros contables o históricos necesarios para el resguardo legal pueden conservarse por el tiempo exigido por las normativas.
+  </p>
+
+  <h2>¿Cómo solicitarlo?</h2>
+  <p>
+    Enviá un correo a <strong>soporte@acia.com.ar</strong> con el asunto:
+    <strong>"Eliminar mi cuenta ACIA"</strong>.
+  </p>
+  <p>
+    En un plazo de 72 horas responderemos confirmando la eliminación de la cuenta.
+  </p>
+
+  <p>© 2025 ACIA – Administración Comercial por Inteligencia Artificial</p>
+</body>
+</html>
